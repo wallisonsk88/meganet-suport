@@ -189,6 +189,7 @@ export default function App() {
       />
 
       <CompleteOrderModal
+        user={currentUser}
         order={completingOrder}
         onClose={() => setCompletingOrder(null)}
       />
