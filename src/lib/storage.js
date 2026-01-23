@@ -81,9 +81,30 @@ export const storage = {
     },
 
     updateOrder: async (id, updates) => {
+        // Map updates to snake_case
+        const mappedUpdates = {};
+        if (updates.customer) mappedUpdates.customer = updates.customer;
+        if (updates.address) mappedUpdates.address = updates.address;
+        if (updates.serviceType) mappedUpdates.service_type = updates.serviceType;
+        if (updates.description) mappedUpdates.description = updates.description;
+        if (updates.scheduledDate) mappedUpdates.scheduled_date = updates.scheduledDate;
+        if (updates.scheduledTime) mappedUpdates.scheduled_time = updates.scheduledTime;
+        if (updates.status) mappedUpdates.status = updates.status;
+        if (updates.resolution) mappedUpdates.resolution = updates.resolution;
+        if (updates.technician) mappedUpdates.technician = updates.technician;
+        if (updates.completedAt) mappedUpdates.completed_at = updates.completedAt;
+        if (updates.createdBy) mappedUpdates.created_by = updates.createdBy;
+
+        // If specific snake_case keys were passed directly, keep them too (just in case)
+        if (updates.service_type) mappedUpdates.service_type = updates.service_type;
+        if (updates.scheduled_date) mappedUpdates.scheduled_date = updates.scheduled_date;
+        if (updates.scheduled_time) mappedUpdates.scheduled_time = updates.scheduled_time;
+        if (updates.completed_at) mappedUpdates.completed_at = updates.completed_at;
+        if (updates.created_by) mappedUpdates.created_by = updates.created_by;
+
         const { error } = await supabase
             .from('orders')
-            .update(updates)
+            .update(mappedUpdates)
             .eq('id', id);
 
         if (error) throw error;
