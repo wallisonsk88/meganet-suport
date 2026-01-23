@@ -3,6 +3,7 @@ import { FileText } from 'lucide-react';
 
 // Icons & Libs
 import { storage } from './lib/storage';
+import { supabase } from './lib/supabase';
 
 // Components
 import Header from './components/Header';
@@ -57,7 +58,20 @@ export default function App() {
     };
 
     window.addEventListener('storage-update', handleStorageUpdate);
-    return () => window.removeEventListener('storage-update', handleStorageUpdate);
+
+    // Supabase Realtime Subscription
+    const channel = supabase
+      .channel('realtime:orders')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, (payload) => {
+        console.log('Realtime change received!', payload);
+        fetchOrders(); // Reload orders when anything changes
+      })
+      .subscribe();
+
+    return () => {
+      window.removeEventListener('storage-update', handleStorageUpdate);
+      supabase.removeChannel(channel);
+    };
   }, [currentUser]);
 
   // Role Permissions
