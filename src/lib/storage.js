@@ -43,20 +43,34 @@ export const storage = {
             .from('orders')
             .select('*')
             .order('created_at', { ascending: false });
-        
+
         if (error) {
             console.error('Error fetching orders:', error);
             return [];
         }
-        return data || [];
+
+        return (data || []).map(order => ({
+            ...order,
+            serviceType: order.service_type,
+            scheduledDate: order.scheduled_date,
+            scheduledTime: order.scheduled_time,
+            createdBy: order.created_by,
+            completedAt: order.completed_at
+        }));
     },
 
     addOrder: async (order) => {
         const { data, error } = await supabase
             .from('orders')
             .insert([{
-                ...order,
-                status: 'pending'
+                customer: order.customer,
+                address: order.address,
+                service_type: order.serviceType,
+                description: order.description,
+                scheduled_date: order.scheduledDate,
+                scheduled_time: order.scheduledTime,
+                status: 'pending',
+                created_by: order.createdBy
             }])
             .select()
             .single();
@@ -91,7 +105,7 @@ export const storage = {
         const { data, error } = await supabase
             .from('users')
             .select('*');
-        
+
         if (error) {
             console.error('Error fetching users:', error);
             return [];

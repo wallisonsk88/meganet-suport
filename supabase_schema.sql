@@ -14,15 +14,15 @@ CREATE TABLE IF NOT EXISTS public.orders (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     customer TEXT NOT NULL,
     address TEXT NOT NULL,
-    serviceType TEXT NOT NULL,
+    service_type TEXT NOT NULL,
     description TEXT,
-    scheduledDate DATE NOT NULL,
-    scheduledTime TIME NOT NULL,
+    scheduled_date DATE NOT NULL,
+    scheduled_time TIME NOT NULL,
     status TEXT NOT NULL DEFAULT 'pending',
     resolution TEXT,
-    completedAt TIMESTAMP WITH TIME ZONE,
+    completed_at TIMESTAMP WITH TIME ZONE,
     technician TEXT,
-    createdBy TEXT,
+    created_by TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
