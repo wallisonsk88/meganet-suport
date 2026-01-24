@@ -12,6 +12,7 @@ export default function ChatWidget({ user }) {
     const messagesEndRef = useRef(null);
     const chatBoxRef = useRef(null);
     const fileInputRef = useRef(null);
+    const notificationSound = useRef(new Audio('https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3')); // Som de notificação padrão
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -31,7 +32,13 @@ export default function ChatWidget({ user }) {
         const channel = supabase
             .channel('realtime:messages')
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, (payload) => {
+                const isNewOtherMessage = payload.new.sender_name !== user.name;
+
                 setMessages((prev) => [...prev, payload.new]);
+
+                if (isNewOtherMessage) {
+                    notificationSound.current.play().catch(e => console.log('Audio error:', e));
+                }
 
                 if (!isOpen) {
                     setHasUnread(true);
@@ -44,7 +51,7 @@ export default function ChatWidget({ user }) {
         return () => {
             supabase.removeChannel(channel);
         };
-    }, [isOpen]);
+    }, [isOpen, user.name]);
 
     useEffect(() => {
         if (isOpen) {
@@ -157,6 +164,7 @@ export default function ChatWidget({ user }) {
                             ref={fileInputRef}
                             className="hidden"
                             accept="image/*"
+                            capture="environment"
                             onChange={() => {
                                 // Force re-render to update button state or show preview if needed
                                 // For now just relies on fileInputRef check in submit
