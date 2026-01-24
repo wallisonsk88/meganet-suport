@@ -14,6 +14,7 @@ import OrderFormModal from './components/OrderFormModal';
 import CompleteOrderModal from './components/CompleteOrderModal';
 import UserManagementModal from './components/UserManagementModal';
 import Login from './components/Login';
+import ChatWidget from './components/ChatWidget';
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState(storage.getAuthenticatedUser());
@@ -64,7 +65,7 @@ export default function App() {
       .channel('realtime:orders')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, (payload) => {
         // console.log('Realtime change received!', payload);
-        
+
         if (payload.eventType === 'INSERT') {
           setOrders((prev) => [
             {
@@ -78,16 +79,16 @@ export default function App() {
             ...prev
           ]);
         } else if (payload.eventType === 'UPDATE') {
-          setOrders((prev) => prev.map((order) => 
-            order.id === payload.new.id 
+          setOrders((prev) => prev.map((order) =>
+            order.id === payload.new.id
               ? {
-                  ...payload.new,
-                  serviceType: payload.new.service_type,
-                  scheduledDate: payload.new.scheduled_date,
-                  scheduledTime: payload.new.scheduled_time,
-                  createdBy: payload.new.created_by,
-                  completedAt: payload.new.completed_at
-                } 
+                ...payload.new,
+                serviceType: payload.new.service_type,
+                scheduledDate: payload.new.scheduled_date,
+                scheduledTime: payload.new.scheduled_time,
+                createdBy: payload.new.created_by,
+                completedAt: payload.new.completed_at
+              }
               : order
           ));
         } else if (payload.eventType === 'DELETE') {
@@ -226,6 +227,8 @@ export default function App() {
         isOpen={isUsersModalOpen}
         onClose={() => setIsUsersModalOpen(false)}
       />
+
+      <ChatWidget user={currentUser} />
     </div>
   );
 }

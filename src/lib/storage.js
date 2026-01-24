@@ -154,6 +154,29 @@ export const storage = {
 
         if (error) throw error;
         window.dispatchEvent(new Event('users-update'));
+    },
+
+    // --- CHAT ---
+    getMessages: async () => {
+        const { data, error } = await supabase
+            .from('messages')
+            .select('*')
+            .order('created_at', { ascending: true })
+            .limit(50);
+
+        if (error) {
+            console.error('Error fetching messages:', error);
+            return [];
+        }
+        return data || [];
+    },
+
+    sendMessage: async (content, senderName) => {
+        const { error } = await supabase
+            .from('messages')
+            .insert([{ content, sender_name: senderName }]);
+
+        if (error) throw error;
     }
 };
 
