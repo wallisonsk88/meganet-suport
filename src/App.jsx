@@ -12,6 +12,9 @@ import SearchBar from './components/SearchBar';
 import OrderCard from './components/OrderCard';
 import OrderFormModal from './components/OrderFormModal';
 import CompleteOrderModal from './components/CompleteOrderModal';
+import UserManagementModal from './components/UserManagementModal';
+import Login from './components/Login';
+import ChatWidget from './components/ChatWidget';
 import AdminReportsModal from './components/AdminReportsModal';
 
 export default function App() {
