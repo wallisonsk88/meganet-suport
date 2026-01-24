@@ -12,9 +12,7 @@ import SearchBar from './components/SearchBar';
 import OrderCard from './components/OrderCard';
 import OrderFormModal from './components/OrderFormModal';
 import CompleteOrderModal from './components/CompleteOrderModal';
-import UserManagementModal from './components/UserManagementModal';
-import Login from './components/Login';
-import ChatWidget from './components/ChatWidget';
+import AdminReportsModal from './components/AdminReportsModal';
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState(storage.getAuthenticatedUser());
@@ -22,6 +20,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isUsersModalOpen, setIsUsersModalOpen] = useState(false);
+  const [isReportsModalOpen, setIsReportsModalOpen] = useState(false);
   const [editingOrder, setEditingOrder] = useState(null);
   const [completingOrder, setCompletingOrder] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -180,6 +179,7 @@ export default function App() {
         onLogout={handleLogout}
         onAddClick={handleAddClick}
         onManageUsersClick={() => setIsUsersModalOpen(true)}
+        onReportsClick={() => setIsReportsModalOpen(true)}
         canCreate={permissions.canCreate}
         canManageUsers={permissions.canManageUsers}
       />
@@ -233,6 +233,12 @@ export default function App() {
       <UserManagementModal
         isOpen={isUsersModalOpen}
         onClose={() => setIsUsersModalOpen(false)}
+      />
+
+      <AdminReportsModal
+        isOpen={isReportsModalOpen}
+        onClose={() => setIsReportsModalOpen(false)}
+        orders={orders}
       />
 
       <ChatWidget user={currentUser} />

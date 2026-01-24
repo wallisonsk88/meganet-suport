@@ -1,7 +1,7 @@
 import React from 'react';
-import { Wifi, Plus, Settings, LogOut, User as UserIcon } from 'lucide-react';
+import { Wifi, Plus, Settings, LogOut, BarChart2, User as UserIcon } from 'lucide-react';
 
-export default function Header({ user, onLogout, onAddClick, onManageUsersClick, canCreate, canManageUsers }) {
+export default function Header({ user, onLogout, onAddClick, onManageUsersClick, onReportsClick, canCreate, canManageUsers }) {
     const getRoleLabel = (role) => {
         const roles = {
             admin: 'Admin',
@@ -12,16 +12,16 @@ export default function Header({ user, onLogout, onAddClick, onManageUsersClick,
     };
 
     return (
-        <header className="bg-white border-b sticky top-0 z-10 shadow-sm">
+        <header className="bg-white border-b sticky top-0 z-10 shadow-sm font-sans">
             <div className="max-w-4xl mx-auto px-4 py-4 space-y-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <div className="bg-orange-600 p-2 rounded-lg text-white">
+                        <div className="bg-orange-600 p-2 rounded-lg text-white shadow-lg shadow-orange-200">
                             <Wifi size={24} />
                         </div>
                         <div>
-                            <h1 className="text-xl font-bold tracking-tight text-slate-900 leading-none">MegaNet Suporte</h1>
-                            <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider mt-1">Gestão de Ordens de Serviço</p>
+                            <h1 className="text-xl font-black tracking-tight text-slate-900 leading-none">MegaNet Suporte</h1>
+                            <p className="text-[10px] text-slate-500 uppercase font-black tracking-wider mt-1">Gestão de Ordens de Serviço</p>
                         </div>
                     </div>
 
@@ -34,19 +34,28 @@ export default function Header({ user, onLogout, onAddClick, onManageUsersClick,
 
                         <div className="flex items-center gap-1.5">
                             {canManageUsers && (
-                                <button
-                                    onClick={onManageUsersClick}
-                                    className="p-2 text-slate-500 hover:text-orange-600 hover:bg-orange-50 rounded-xl transition-all"
-                                    title="Gerenciar Equipe"
-                                >
-                                    <Settings size={22} />
-                                </button>
+                                <>
+                                    <button
+                                        onClick={onReportsClick}
+                                        className="p-2 text-slate-500 hover:text-orange-600 hover:bg-orange-50 rounded-xl transition-all"
+                                        title="Relatórios de Atividades"
+                                    >
+                                        <BarChart2 size={22} />
+                                    </button>
+                                    <button
+                                        onClick={onManageUsersClick}
+                                        className="p-2 text-slate-500 hover:text-orange-600 hover:bg-orange-50 rounded-xl transition-all"
+                                        title="Gerenciar Equipe"
+                                    >
+                                        <Settings size={22} />
+                                    </button>
+                                </>
                             )}
 
                             {canCreate && (
                                 <button
                                     onClick={onAddClick}
-                                    className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-full flex items-center gap-2 transition-all shadow-lg shadow-orange-200"
+                                    className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-full flex items-center gap-2 transition-all shadow-lg shadow-orange-200 ml-1"
                                 >
                                     <Plus size={20} />
                                     <span className="hidden sm:inline font-bold text-sm">Nova OS</span>
@@ -78,12 +87,20 @@ export default function Header({ user, onLogout, onAddClick, onManageUsersClick,
                         </div>
                     </div>
                     {canManageUsers && (
-                        <button
-                            onClick={onManageUsersClick}
-                            className="text-[10px] font-black uppercase text-orange-600 bg-orange-50 px-3 py-1.5 rounded-lg border border-orange-100"
-                        >
-                            Equipe
-                        </button>
+                        <div className="flex gap-2">
+                            <button
+                                onClick={onReportsClick}
+                                className="text-[10px] font-black uppercase text-slate-600 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200"
+                            >
+                                Relatórios
+                            </button>
+                            <button
+                                onClick={onManageUsersClick}
+                                className="text-[10px] font-black uppercase text-orange-600 bg-orange-50 px-3 py-1.5 rounded-lg border border-orange-100"
+                            >
+                                Equipe
+                            </button>
+                        </div>
                     )}
                 </div>
             </div>
