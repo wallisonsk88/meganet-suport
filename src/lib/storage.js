@@ -171,12 +171,34 @@ export const storage = {
         return data || [];
     },
 
-    sendMessage: async (content, senderName) => {
+    sendMessage: async (content, senderName, imageUrl = null) => {
         const { error } = await supabase
             .from('messages')
-            .insert([{ content, sender_name: senderName }]);
+            .insert([{
+                content,
+                sender_name: senderName,
+                image_url: imageUrl
+            }]);
 
         if (error) throw error;
+    },
+
+    uploadChatImage: async (file) => {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Math.random()}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+            .from('chat-images')
+            .upload(filePath, file);
+
+        if (uploadError) throw uploadError;
+
+        const { data } = supabase.storage
+            .from('chat-images')
+            .getPublicUrl(filePath);
+
+        return data.publicUrl;
     }
 };
 

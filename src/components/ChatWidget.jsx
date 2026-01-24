@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MessageSquare, Send, X, Minimize2, Check } from 'lucide-react';
+import { MessageSquare, Send, X, Minimize2, Image, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { storage } from '../lib/storage';
 
@@ -8,8 +8,10 @@ export default function ChatWidget({ user }) {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [hasUnread, setHasUnread] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
     const messagesEndRef = useRef(null);
     const chatBoxRef = useRef(null);
+    const fileInputRef = useRef(null);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -53,14 +55,27 @@ export default function ChatWidget({ user }) {
 
     const handleSendMessage = async (e) => {
         e.preventDefault();
-        if (!newMessage.trim() || !user) return;
+        // Check if there is a message or a file to upload
+        if ((!newMessage.trim() && !fileInputRef.current?.files[0]) || !user) return;
 
         try {
-            await storage.sendMessage(newMessage, user.name);
+            let imageUrl = null;
+            if (fileInputRef.current?.files[0]) {
+                setIsUploading(true);
+                imageUrl = await storage.uploadChatImage(fileInputRef.current.files[0]);
+                setIsUploading(false);
+            }
+
+            await storage.sendMessage(newMessage, user.name, imageUrl);
+
+            // Allow sending another message
             setNewMessage('');
-            // Optimization: UI update is handled by Realtime subscription
+            if (fileInputRef.current) fileInputRef.current.value = '';
+
         } catch (error) {
             console.error("Error sending message:", error);
+            setIsUploading(false);
+            alert("Erro ao enviar mensagem. Tente novamente.");
         }
     };
 
@@ -108,7 +123,17 @@ export default function ChatWidget({ user }) {
                                     </div>
                                     <div className={`px-4 py-2 rounded-2xl max-w-[85%] text-sm break-words shadow-sm
                             ${isMe ? 'bg-orange-600 text-white rounded-tr-none' : 'bg-white text-slate-700 border border-slate-100 rounded-tl-none'}`}>
-                                        {msg.content}
+                                        {msg.image_url && (
+                                            <div className="mb-2">
+                                                <img
+                                                    src={msg.image_url}
+                                                    alt="Anexo"
+                                                    className="w-full h-auto rounded-lg cursor-pointer hover:opacity-90 max-h-48 object-cover"
+                                                    onClick={() => window.open(msg.image_url, '_blank')}
+                                                />
+                                            </div>
+                                        )}
+                                        {msg.content && <p>{msg.content}</p>}
                                     </div>
                                 </div>
                             );
@@ -117,7 +142,27 @@ export default function ChatWidget({ user }) {
                     </div>
 
                     {/* Input Area */}
-                    <form onSubmit={handleSendMessage} className="p-3 bg-white border-t border-slate-100 flex gap-2 shrink-0">
+                    <form onSubmit={handleSendMessage} className="p-3 bg-white border-t border-slate-100 flex gap-2 shrink-0 items-center">
+                        <button
+                            type="button"
+                            onClick={() => fileInputRef.current?.click()}
+                            className="text-slate-400 hover:text-orange-600 p-2 rounded-xl transition-colors"
+                            title="Enviar imagem"
+                        >
+                            <Image size={20} />
+                        </button>
+
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            className="hidden"
+                            accept="image/*"
+                            onChange={() => {
+                                // Force re-render to update button state or show preview if needed
+                                // For now just relies on fileInputRef check in submit
+                            }}
+                        />
+
                         <input
                             type="text"
                             className="flex-1 px-4 py-2 bg-slate-100 rounded-xl border-transparent focus:bg-white focus:border-orange-500 focus:ring-0 text-sm transition-all outline-none"
@@ -125,12 +170,13 @@ export default function ChatWidget({ user }) {
                             value={newMessage}
                             onChange={(e) => setNewMessage(e.target.value)}
                         />
+
                         <button
                             type="submit"
-                            disabled={!newMessage.trim()}
-                            className="bg-orange-600 hover:bg-orange-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded-xl transition-colors"
+                            disabled={isUploading}
+                            className="bg-orange-600 hover:bg-orange-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded-xl transition-colors flex items-center justify-center"
                         >
-                            <Send size={20} />
+                            {isUploading ? <Loader2 size={20} className="animate-spin" /> : <Send size={20} />}
                         </button>
                     </form>
                 </div>
