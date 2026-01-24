@@ -161,14 +161,14 @@ export const storage = {
         const { data, error } = await supabase
             .from('messages')
             .select('*')
-            .order('created_at', { ascending: true })
+            .order('created_at', { ascending: false })
             .limit(50);
 
         if (error) {
             console.error('Error fetching messages:', error);
             return [];
         }
-        return data || [];
+        return (data || []).reverse();
     },
 
     sendMessage: async (content, senderName, imageUrl = null) => {
