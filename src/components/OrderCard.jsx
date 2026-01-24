@@ -30,28 +30,26 @@ export default function OrderCard({ os, onCompleteClick, onEditClick, onDeleteCl
                         </div>
                         <div className="flex items-center justify-between">
                             <h3 className="text-lg font-bold text-slate-800">{os.customer}</h3>
-                            {os.status === 'pending' && (
-                                <div className="flex items-center gap-1">
-                                    {canEdit && (
-                                        <button
-                                            onClick={() => onEditClick(os)}
-                                            className="p-1.5 text-slate-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
-                                            title="Editar OS"
-                                        >
-                                            <Edit2 size={18} />
-                                        </button>
-                                    )}
-                                    {canDelete && (
-                                        <button
-                                            onClick={() => onDeleteClick(os.id)}
-                                            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                            title="Excluir OS"
-                                        >
-                                            <Trash2 size={18} />
-                                        </button>
-                                    )}
-                                </div>
-                            )}
+                            <div className="flex items-center gap-1">
+                                {os.status === 'pending' && canEdit && (
+                                    <button
+                                        onClick={() => onEditClick(os)}
+                                        className="p-1.5 text-slate-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                                        title="Editar OS"
+                                    >
+                                        <Edit2 size={18} />
+                                    </button>
+                                )}
+                                {canDelete && (
+                                    <button
+                                        onClick={() => onDeleteClick(os.id)}
+                                        className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                        title="Excluir OS"
+                                    >
+                                        <Trash2 size={18} />
+                                    </button>
+                                )}
+                            </div>
                         </div>
                         <p className="text-sm text-slate-500 flex items-center gap-1">
                             <User size={14} className="shrink-0" /> {os.address}
