@@ -100,7 +100,8 @@ export default function OrderFormModal({ user, isOpen, onClose, editOrder = null
                                     onChange={e => setOrderData({ ...orderData, serviceType: e.target.value })}
                                 >
                                     <option>Instalação</option>
-                                    <option>Reparo</option>
+                                    <option>Suporte</option>
+                                    <option>Pagamento</option>
                                     <option>Mudança de Endereço</option>
                                     <option>Troca de Equipamento</option>
                                 </select>

@@ -63,8 +63,36 @@ export default function App() {
     const channel = supabase
       .channel('realtime:orders')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, (payload) => {
-        console.log('Realtime change received!', payload);
-        fetchOrders(); // Reload orders when anything changes
+        // console.log('Realtime change received!', payload);
+        
+        if (payload.eventType === 'INSERT') {
+          setOrders((prev) => [
+            {
+              ...payload.new,
+              serviceType: payload.new.service_type,
+              scheduledDate: payload.new.scheduled_date,
+              scheduledTime: payload.new.scheduled_time,
+              createdBy: payload.new.created_by,
+              completedAt: payload.new.completed_at
+            },
+            ...prev
+          ]);
+        } else if (payload.eventType === 'UPDATE') {
+          setOrders((prev) => prev.map((order) => 
+            order.id === payload.new.id 
+              ? {
+                  ...payload.new,
+                  serviceType: payload.new.service_type,
+                  scheduledDate: payload.new.scheduled_date,
+                  scheduledTime: payload.new.scheduled_time,
+                  createdBy: payload.new.created_by,
+                  completedAt: payload.new.completed_at
+                } 
+              : order
+          ));
+        } else if (payload.eventType === 'DELETE') {
+          setOrders((prev) => prev.filter((order) => order.id !== payload.old.id));
+        }
       })
       .subscribe();
 

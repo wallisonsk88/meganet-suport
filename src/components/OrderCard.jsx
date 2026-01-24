@@ -21,8 +21,9 @@ export default function OrderCard({ os, onCompleteClick, onEditClick, onDeleteCl
                         <div className="flex items-center gap-2 mb-1">
                             <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full
                 ${os.serviceType === 'Instalação' ? 'bg-orange-100 text-orange-700' :
-                                    os.serviceType === 'Reparo' ? 'bg-orange-100 text-orange-700' :
-                                        'bg-purple-100 text-purple-700'}`}>
+                                    (os.serviceType === 'Reparo' || os.serviceType === 'Suporte') ? 'bg-orange-100 text-orange-700' :
+                                        os.serviceType === 'Pagamento' ? 'bg-emerald-100 text-emerald-700' :
+                                            'bg-purple-100 text-purple-700'}`}>
                                 {os.serviceType}
                             </span>
                             <span className="text-xs text-slate-400 font-mono">#{os.id?.slice(-6).toUpperCase()}</span>
