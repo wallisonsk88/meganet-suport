@@ -142,8 +142,14 @@ export default function App() {
     setIsFormOpen(true);
   };
 
-  const handleDeleteClick = async (id) => {
+  const handleDeleteClick = async (id, status) => {
     if (!permissions?.canDelete) return;
+
+    if (status === 'completed' && currentUser.role !== 'admin') {
+      alert('Apenas administradores podem excluir ordens de serviço concluídas.');
+      return;
+    }
+
     if (window.confirm('Tem certeza que deseja excluir esta ordem de serviço?')) {
       await storage.deleteOrder(id);
     }
@@ -199,8 +205,9 @@ export default function App() {
                 os={os}
                 onCompleteClick={(order) => setCompletingOrder(order)}
                 onEditClick={handleEditClick}
-                onDeleteClick={handleDeleteClick}
+                onDeleteClick={(id) => handleDeleteClick(id, os.status)}
                 permissions={permissions}
+                userRole={currentUser?.role}
               />
             ))
           )}

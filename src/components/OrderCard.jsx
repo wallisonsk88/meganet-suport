@@ -1,7 +1,7 @@
 import React from 'react';
 import { Clock, Check, User, Calendar, FileText, CheckCircle2, Edit2, Trash2 } from 'lucide-react';
 
-export default function OrderCard({ os, onCompleteClick, onEditClick, onDeleteClick, permissions }) {
+export default function OrderCard({ os, onCompleteClick, onEditClick, onDeleteClick, permissions, userRole }) {
     const { canEdit, canDelete, canComplete } = permissions;
 
     return (
@@ -40,7 +40,7 @@ export default function OrderCard({ os, onCompleteClick, onEditClick, onDeleteCl
                                         <Edit2 size={18} />
                                     </button>
                                 )}
-                                {canDelete && (
+                                {canDelete && (os.status !== 'completed' || userRole === 'admin') && (
                                     <button
                                         onClick={() => onDeleteClick(os.id)}
                                         className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
