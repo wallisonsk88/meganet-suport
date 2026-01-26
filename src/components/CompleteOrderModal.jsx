@@ -31,7 +31,7 @@ export default function CompleteOrderModal({ order, user, onClose }) {
                 </div>
 
                 <div className="p-6 space-y-4">
-                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                    <div className="bg-slate-100 p-4 rounded-xl border border-slate-100">
                         <p className="text-sm text-slate-600 mb-1">Cliente</p>
                         <p className="font-semibold text-slate-900">{order.customer}</p>
 

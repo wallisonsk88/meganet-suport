@@ -62,7 +62,7 @@ export default function OrderFormModal({ user, isOpen, onClose, editOrder = null
     return (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
-                <div className="p-6 border-b flex items-center justify-between bg-slate-50">
+                <div className="p-6 border-b flex items-center justify-between bg-slate-100">
                     <h2 className="text-xl font-bold flex items-center gap-2">
                         {editOrder ? <Edit2 className="text-orange-600" /> : <Plus className="text-orange-600" />}
                         {editOrder ? 'Editar Ordem de Serviço' : 'Nova Ordem de Serviço'}

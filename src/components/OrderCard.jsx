@@ -7,7 +7,7 @@ export default function OrderCard({ os, onCompleteClick, onEditClick, onDeleteCl
     return (
         <div className="relative group">
             {/* Timeline Dot */}
-            <div className={`absolute -left-12 top-0 w-8 h-8 rounded-full border-4 border-slate-50 flex items-center justify-center transition-colors shadow-sm
+            <div className={`absolute -left-12 top-0 w-8 h-8 rounded-full border-4 border-slate-100 flex items-center justify-center transition-colors shadow-sm
         ${os.status === 'completed' ? 'bg-emerald-500 text-white' : 'bg-orange-600 text-white'}`}>
                 {os.status === 'completed' ? <Check size={16} /> : <Clock size={16} />}
             </div>
@@ -66,7 +66,7 @@ export default function OrderCard({ os, onCompleteClick, onEditClick, onDeleteCl
                     </div>
                 </div>
 
-                <div className="bg-slate-50 rounded-lg p-3 mb-4 text-sm text-slate-700 border border-slate-100">
+                <div className="bg-slate-100 rounded-lg p-3 mb-4 text-sm text-slate-700 border border-slate-100">
                     <p className="font-medium mb-1 flex items-center gap-1"><FileText size={14} /> Descrição:</p>
                     {os.description}
                 </div>

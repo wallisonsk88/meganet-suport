@@ -73,7 +73,7 @@ export default function UserManagementModal({ isOpen, onClose }) {
     return (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 flex flex-col max-h-[90vh]">
-                <div className="p-6 border-b flex items-center justify-between bg-slate-50">
+                <div className="p-6 border-b flex items-center justify-between bg-slate-100">
                     <h2 className="text-xl font-bold flex items-center gap-2">
                         <Users className="text-orange-600" /> Gestão de Equipe
                     </h2>
@@ -84,7 +84,7 @@ export default function UserManagementModal({ isOpen, onClose }) {
 
                 <div className="p-6 overflow-y-auto space-y-6">
                     {/* Add User Form */}
-                    <form onSubmit={handleAddUser} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+                    <form onSubmit={handleAddUser} className="bg-slate-100 p-4 rounded-2xl border border-slate-200 space-y-3">
                         <h3 className="text-sm font-bold text-slate-700 flex items-center gap-2">
                             <UserPlus size={16} /> Novo Membro
                         </h3>
@@ -156,7 +156,7 @@ export default function UserManagementModal({ isOpen, onClose }) {
                     </div>
                 </div>
 
-                <div className="p-4 bg-slate-50 border-t">
+                <div className="p-4 bg-slate-100 border-t">
                     <button
                         onClick={onClose}
                         className="w-full py-2.5 text-slate-600 font-bold hover:text-slate-800 transition-colors"

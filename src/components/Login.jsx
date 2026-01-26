@@ -30,7 +30,7 @@ export default function Login() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
             <div className="w-full max-w-md">
                 <div className="text-center mb-10 animate-in fade-in slide-in-from-top-4 duration-700">
                     <div className="bg-orange-600 w-16 h-16 rounded-2xl flex items-center justify-center text-white mx-auto mb-4 shadow-xl shadow-orange-200">

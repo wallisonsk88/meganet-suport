@@ -76,7 +76,7 @@ export default function Header({ user, onLogout, onAddClick, onManageUsersClick,
                 </div>
 
                 {/* Mobile User Info Bar */}
-                <div className="flex md:hidden items-center justify-between bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
+                <div className="flex md:hidden items-center justify-between bg-slate-100 p-2.5 rounded-2xl border border-slate-200">
                     <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-600">
                             <UserIcon size={16} />
