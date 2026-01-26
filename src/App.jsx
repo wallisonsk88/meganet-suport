@@ -110,7 +110,7 @@ export default function App() {
     if (!currentUser) return null;
     const roles = {
       admin: { canCreate: true, canEdit: true, canDelete: true, canComplete: true, canManageUsers: true },
-      recepcao: { canCreate: true, canEdit: true, canDelete: false, canComplete: false, canManageUsers: false },
+      recepcao: { canCreate: true, canEdit: true, canDelete: true, canComplete: false, canManageUsers: false },
       tecnico: { canCreate: false, canEdit: false, canDelete: false, canComplete: true, canManageUsers: false }
     };
     return roles[currentUser.role] || roles.tecnico;
