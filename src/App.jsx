@@ -118,22 +118,26 @@ export default function App() {
     return roles[currentUser.role] || roles.tecnico;
   }, [currentUser]);
 
-  // 3. Logic & Sorting - Prioritize completed recent ones at top
+  // 3. Logic & Sorting - Pending first, then completed (recently finished at top of its group)
   const sortedOrders = useMemo(() => {
     return [...orders].sort((a, b) => {
-      // Priority 1: Status (Completed on top to show finished work)
-      if (a.status === 'completed' && b.status !== 'completed') return -1;
-      if (a.status !== 'completed' && b.status === 'completed') return 1;
+      // Priority 1: Status (Pending on top, Completed below)
+      if (a.status === 'pending' && b.status !== 'pending') return -1;
+      if (a.status !== 'pending' && b.status === 'pending') return 1;
 
-      // Priority 2: If both are completed, newest at top
+      // Priority 2: If both are pending, sort by schedule (oldest first - timeline)
+      if (a.status === 'pending' && b.status === 'pending') {
+        const dateA = new Date(`${a.scheduledDate}T${a.scheduledTime}`);
+        const dateB = new Date(`${b.scheduledDate}T${b.scheduledTime}`);
+        return dateA - dateB;
+      }
+
+      // Priority 3: If both are completed, newest at top of the completed section
       if (a.status === 'completed' && b.status === 'completed') {
         return new Date(b.completedAt) - new Date(a.completedAt);
       }
 
-      // Priority 3: If both are pending (or others), sort by schedule (oldest first)
-      const dateA = new Date(`${a.scheduledDate}T${a.scheduledTime}`);
-      const dateB = new Date(`${b.scheduledDate}T${b.scheduledTime}`);
-      return dateA - dateB;
+      return 0;
     }).filter(os =>
       os.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
       os.address.toLowerCase().includes(searchTerm.toLowerCase())
