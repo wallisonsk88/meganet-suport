@@ -75,6 +75,15 @@ export default function InventoryModal({ isOpen, onClose, user }) {
         }
     };
 
+    const handleDirectUpdateStock = async (id, newStock) => {
+        if (!isAdmin) return;
+        try {
+            await storage.updateInventoryItem(id, { currentStock: newStock }, user?.name);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     const handleDeleteItem = async (id) => {
         if (!isAdmin) return;
         if (window.confirm("Deseja realmente remover este item do catálogo?")) {
@@ -253,10 +262,29 @@ export default function InventoryModal({ isOpen, onClose, user }) {
                                                         </td>
                                                         <td className="px-6 py-4">
                                                             <div className="flex flex-col items-center">
-                                                                <span className={`text-xl font-black ${isLow ? 'text-red-500' : 'text-slate-900'}`}>
-                                                                    {item.current_stock}
-                                                                </span>
-                                                                <span className="text-[10px] uppercase font-bold text-slate-400 leading-none">{item.unit}</span>
+                                                                {isAdmin ? (
+                                                                    <input
+                                                                        type="number"
+                                                                        defaultValue={item.current_stock}
+                                                                        onBlur={async (e) => {
+                                                                            const val = parseInt(e.target.value);
+                                                                            if (!isNaN(val) && val !== item.current_stock) {
+                                                                                await handleDirectUpdateStock(item.id, val);
+                                                                            }
+                                                                        }}
+                                                                        onKeyDown={(e) => {
+                                                                            if (e.key === 'Enter') {
+                                                                                e.target.blur();
+                                                                            }
+                                                                        }}
+                                                                        className={`w-20 text-center text-xl font-black bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all ${isLow ? 'text-red-500 border-red-200' : 'text-slate-900 hover:border-slate-300'}`}
+                                                                    />
+                                                                ) : (
+                                                                    <span className={`text-xl font-black ${isLow ? 'text-red-500' : 'text-slate-900'}`}>
+                                                                        {item.current_stock}
+                                                                    </span>
+                                                                )}
+                                                                <span className="text-[10px] uppercase font-bold text-slate-400 leading-none mt-1">{item.unit}</span>
                                                                 {isLow && (
                                                                     <span className="text-[9px] font-black text-red-500 uppercase mt-1 animate-pulse">Estoque Crítico</span>
                                                                 )}
