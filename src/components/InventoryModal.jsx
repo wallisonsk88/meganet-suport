@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Package, X, Plus, Trash2, AlertTriangle, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { storage } from '../lib/storage';
 
-export default function InventoryModal({ isOpen, onClose }) {
+export default function InventoryModal({ isOpen, onClose, user }) {
+    const isAdmin = user?.role === 'admin';
     const [inventory, setInventory] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isAdding, setIsAdding] = useState(false);
@@ -17,9 +18,14 @@ export default function InventoryModal({ isOpen, onClose }) {
 
     const fetchInventory = async () => {
         setIsLoading(true);
-        const data = await storage.getInventory();
-        setInventory(data);
-        setIsLoading(false);
+        try {
+            const data = await storage.getInventory();
+            setInventory(data);
+        } catch (err) {
+            console.error("Erro ao carregar estoque:", err);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     useEffect(() => {
@@ -34,6 +40,7 @@ export default function InventoryModal({ isOpen, onClose }) {
 
     const handleAddItem = async (e) => {
         e.preventDefault();
+        if (!isAdmin) return;
         try {
             await storage.addInventoryItem(newItem);
             setIsAdding(false);
@@ -52,14 +59,16 @@ export default function InventoryModal({ isOpen, onClose }) {
     };
 
     const handleUpdateStock = async (id, currentStock, delta) => {
+        if (!isAdmin) return;
         try {
-            await storage.updateInventoryItem(id, { currentStock: currentStock + delta });
+            await storage.updateInventoryItem(id, { current_stock: currentStock + delta });
         } catch (err) {
             console.error(err);
         }
     };
 
     const handleDeleteItem = async (id) => {
+        if (!isAdmin) return;
         if (window.confirm("Deseja realmente remover este item do catálogo?")) {
             try {
                 await storage.deleteInventoryItem(id);
@@ -86,13 +95,15 @@ export default function InventoryModal({ isOpen, onClose }) {
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
-                        <button
-                            onClick={() => setIsAdding(!isAdding)}
-                            className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-bold transition-all"
-                        >
-                            <Plus size={18} />
-                            Novo Item
-                        </button>
+                        {isAdmin && (
+                            <button
+                                onClick={() => setIsAdding(!isAdding)}
+                                className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-bold transition-all"
+                            >
+                                <Plus size={18} />
+                                Novo Item
+                            </button>
+                        )}
                         <button onClick={onClose} className="text-slate-400 hover:text-slate-600 p-2">
                             <X size={24} />
                         </button>
@@ -101,7 +112,7 @@ export default function InventoryModal({ isOpen, onClose }) {
 
                 <div className="flex-1 overflow-auto p-6">
                     {/* Add Form */}
-                    {isAdding && (
+                    {isAdding && isAdmin && (
                         <form onSubmit={handleAddItem} className="mb-8 bg-orange-50 p-6 rounded-2xl border border-orange-100 animate-in slide-in-from-top-4 duration-200">
                             <h3 className="text-sm font-bold text-orange-800 mb-4 uppercase tracking-wider">Cadastrar Novo Produto</h3>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -206,28 +217,35 @@ export default function InventoryModal({ isOpen, onClose }) {
                                                 <td className="px-6 py-4 text-center">
                                                     <p className="text-xs font-bold text-slate-500 italic">Mín: {item.min_stock}</p>
                                                 </td>
-                                                <td className="px-6 py-4">
+                                                <td className="px-6 py-4 text-right">
                                                     <div className="flex items-center justify-end gap-2">
-                                                        <button
-                                                            onClick={() => handleUpdateStock(item.id, item.current_stock, 1)}
-                                                            className="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 transition-colors"
-                                                            title="Adicionar 1"
-                                                        >
-                                                            <ArrowUpRight size={18} />
-                                                        </button>
-                                                        <button
-                                                            onClick={() => handleUpdateStock(item.id, item.current_stock, -1)}
-                                                            className="p-1.5 bg-orange-50 text-orange-600 rounded-lg hover:bg-orange-100 transition-colors"
-                                                            title="Remover 1"
-                                                        >
-                                                            <ArrowDownRight size={18} />
-                                                        </button>
-                                                        <button
-                                                            onClick={() => handleDeleteItem(item.id)}
-                                                            className="p-1.5 bg-slate-50 text-slate-400 rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors ml-2"
-                                                        >
-                                                            <Trash2 size={18} />
-                                                        </button>
+                                                        {isAdmin ? (
+                                                            <>
+                                                                <button
+                                                                    onClick={() => handleUpdateStock(item.id, item.current_stock, 1)}
+                                                                    className="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 transition-colors"
+                                                                    title="Adicionar 1"
+                                                                >
+                                                                    <ArrowUpRight size={18} />
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => handleUpdateStock(item.id, item.current_stock, -1)}
+                                                                    className="p-1.5 bg-orange-50 text-orange-600 rounded-lg hover:bg-orange-100 transition-colors"
+                                                                    title="Remover 1"
+                                                                >
+                                                                    <ArrowDownRight size={18} />
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => handleDeleteItem(item.id)}
+                                                                    className="p-1.5 bg-slate-50 text-slate-400 rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors ml-2"
+                                                                    title="Excluir Item"
+                                                                >
+                                                                    <Trash2 size={18} />
+                                                                </button>
+                                                            </>
+                                                        ) : (
+                                                            <span className="text-[10px] text-slate-400 font-bold uppercase">Somente Leitura</span>
+                                                        )}
                                                     </div>
                                                 </td>
                                             </tr>

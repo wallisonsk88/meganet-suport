@@ -237,6 +237,7 @@ export default function App() {
       />
 
       <InventoryModal
+        user={currentUser}
         isOpen={isInventoryModalOpen}
         onClose={() => setIsInventoryModalOpen(false)}
       />
