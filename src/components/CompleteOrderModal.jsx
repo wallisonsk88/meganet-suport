@@ -15,9 +15,16 @@ export default function CompleteOrderModal({ order, user, onClose }) {
 
     const fetchInventory = async () => {
         setIsInventoryLoading(true);
-        const data = await storage.getInventory();
-        setInventory(data);
-        setIsInventoryLoading(false);
+        try {
+            console.log("Buscando inventário para usuário:", user?.name, "Role:", user?.role);
+            const data = await storage.getInventory();
+            console.log("Itens de inventário encontrados:", data?.length || 0);
+            setInventory(data || []);
+        } catch (error) {
+            console.error("Erro crítico ao carregar inventário no Modal:", error);
+        } finally {
+            setIsInventoryLoading(false);
+        }
     };
 
     const handleAddItem = (inventoryItem) => {
