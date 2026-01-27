@@ -94,22 +94,31 @@ export default function Header({ user, onLogout, onAddClick, onManageUsersClick,
                             <p className="text-[10px] text-slate-400 font-bold uppercase">{getRoleLabel(user.role)}</p>
                         </div>
                     </div>
-                    {canManageUsers && (
-                        <div className="flex gap-2">
-                            <button
-                                onClick={onReportsClick}
-                                className="text-[10px] font-black uppercase text-slate-600 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200"
-                            >
-                                Relatórios
-                            </button>
-                            <button
-                                onClick={onManageUsersClick}
-                                className="text-[10px] font-black uppercase text-orange-600 bg-orange-50 px-3 py-1.5 rounded-lg border border-orange-100"
-                            >
-                                Equipe
-                            </button>
-                        </div>
-                    )}
+                    <div className="flex gap-2">
+                        <button
+                            onClick={onInventoryClick}
+                            className="p-1.5 text-orange-600 bg-orange-50 rounded-lg border border-orange-100"
+                            title="Estoque"
+                        >
+                            <Package size={18} />
+                        </button>
+                        {canManageUsers && (
+                            <>
+                                <button
+                                    onClick={onReportsClick}
+                                    className="text-[10px] font-black uppercase text-slate-600 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200"
+                                >
+                                    Relatórios
+                                </button>
+                                <button
+                                    onClick={onManageUsersClick}
+                                    className="text-[10px] font-black uppercase text-orange-600 bg-orange-50 px-3 py-1.5 rounded-lg border border-orange-100"
+                                >
+                                    Equipe
+                                </button>
+                            </>
+                        )}
+                    </div>
                 </div>
             </div>
         </header>
