@@ -1,8 +1,25 @@
-import React from 'react';
-import { Clock, Check, User, Calendar, FileText, CheckCircle2, Edit2, Trash2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Clock, Check, User, Calendar, FileText, CheckCircle2, Edit2, Trash2, Package } from 'lucide-react';
+import { storage } from '../lib/storage';
 
 export default function OrderCard({ os, onCompleteClick, onEditClick, onDeleteClick, permissions, userRole }) {
     const { canEdit, canDelete, canComplete } = permissions;
+    const [usedItems, setUsedItems] = useState([]);
+
+    useEffect(() => {
+        if (os.status === 'completed') {
+            fetchUsedItems();
+        }
+    }, [os.status, os.id]);
+
+    const fetchUsedItems = async () => {
+        try {
+            const items = await storage.getOrderItems(os.id);
+            setUsedItems(items);
+        } catch (error) {
+            console.error("Erro ao carregar itens da OS:", error);
+        }
+    };
 
     return (
         <div className="relative group">
@@ -82,19 +99,40 @@ export default function OrderCard({ os, onCompleteClick, onEditClick, onDeleteCl
                         </button>
                     )
                 ) : (
-                    <div className="flex flex-wrap items-center gap-y-2 gap-x-6 border-t pt-4 mt-2">
-                        <div className="flex items-center gap-2 text-sm">
-                            <span className="text-slate-400">Técnico:</span>
-                            <span className="font-bold text-emerald-700 flex items-center gap-1">
-                                <User size={14} /> {os.technician}
-                            </span>
+                    <div className="space-y-4">
+                        <div className="flex flex-wrap items-center gap-y-2 gap-x-6 border-t pt-4">
+                            <div className="flex items-center gap-2 text-sm">
+                                <span className="text-slate-400">Técnico:</span>
+                                <span className="font-bold text-emerald-700 flex items-center gap-1">
+                                    <User size={14} /> {os.technician}
+                                </span>
+                            </div>
+                            <div className="flex items-center gap-2 text-sm">
+                                <span className="text-slate-400">Concluído em:</span>
+                                <span className="font-medium text-slate-600">
+                                    {new Date(os.completedAt).toLocaleString('pt-BR')}
+                                </span>
+                            </div>
                         </div>
-                        <div className="flex items-center gap-2 text-sm">
-                            <span className="text-slate-400">Concluído em:</span>
-                            <span className="font-medium text-slate-600">
-                                {new Date(os.completedAt).toLocaleString('pt-BR')}
-                            </span>
-                        </div>
+
+                        {usedItems.length > 0 && (
+                            <div className="bg-emerald-50/50 rounded-xl p-3 border border-emerald-100/50">
+                                <p className="text-[10px] font-black uppercase text-emerald-600 mb-2 flex items-center gap-1">
+                                    <Package size={12} /> Materiais Utilizados
+                                </p>
+                                <div className="flex flex-wrap gap-2">
+                                    {usedItems.map((item, idx) => (
+                                        <div key={idx} className="bg-white px-2 py-1 rounded-lg border border-emerald-200 text-xs flex flex-col">
+                                            <span className="font-bold text-slate-700">{item.inventory?.name}</span>
+                                            <span className="text-[10px] text-slate-500">
+                                                Qtd: {item.quantity} {item.inventory?.unit}
+                                                {item.serial_number && ` • SN: ${item.serial_number}`}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

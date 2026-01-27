@@ -224,17 +224,34 @@ export const storage = {
                 description: item.description,
                 unit: item.unit,
                 current_stock: item.currentStock,
-                min_stock: item.minStock
+                min_stock: item.minStock,
+                image_url: item.imageUrl
             }])
             .select()
             .single();
 
         if (error) throw error;
+
+        // Log initial stock
+        if (item.currentStock > 0) {
+            await supabase.from('inventory_logs').insert([{
+                inventory_id: data.id,
+                type: 'entry',
+                quantity: item.currentStock,
+                new_stock: item.currentStock,
+                notes: 'Cadastro inicial do item'
+            }]);
+        }
+
         window.dispatchEvent(new Event('inventory-update'));
         return data;
     },
 
-    updateInventoryItem: async (id, updates) => {
+    updateInventoryItem: async (id, updates, userName = 'Admin') => {
+        // 1. Get current stock for logging
+        const { data: currentItem } = await supabase.from('inventory').select('current_stock').eq('id', id).single();
+        const prevStock = currentItem?.current_stock || 0;
+
         const mappedUpdates = {};
         if (updates.name) mappedUpdates.name = updates.name;
         if (updates.category) mappedUpdates.category = updates.category;
@@ -242,14 +259,33 @@ export const storage = {
         if (updates.unit) mappedUpdates.unit = updates.unit;
         if (updates.currentStock !== undefined) mappedUpdates.current_stock = updates.currentStock;
         if (updates.minStock !== undefined) mappedUpdates.min_stock = updates.minStock;
+        if (updates.imageUrl !== undefined) mappedUpdates.image_url = updates.imageUrl;
 
-        const { error } = await supabase
+        const { data, error } = await supabase
             .from('inventory')
             .update(mappedUpdates)
-            .eq('id', id);
+            .eq('id', id)
+            .select()
+            .single();
 
         if (error) throw error;
+
+        // 2. Log change if quantity changed
+        if (updates.currentStock !== undefined && updates.currentStock !== prevStock) {
+            const diff = updates.currentStock - prevStock;
+            await supabase.from('inventory_logs').insert([{
+                inventory_id: id,
+                type: diff > 0 ? 'entry' : 'adjustment',
+                quantity: Math.abs(diff),
+                prev_stock: prevStock,
+                new_stock: updates.currentStock,
+                user_name: userName,
+                notes: updates.notes || 'Ajuste manual de estoque'
+            }]);
+        }
+
         window.dispatchEvent(new Event('inventory-update'));
+        return data;
     },
 
     deleteInventoryItem: async (id) => {
@@ -262,10 +298,20 @@ export const storage = {
         window.dispatchEvent(new Event('inventory-update'));
     },
 
-    addItemsToOrder: async (orderId, items) => {
-        // items is an array of { inventoryId, quantity, serialNumber }
+    addItemsToOrder: async (orderId, items, technicianName = 'Técnico') => {
         for (const item of items) {
-            // 1. Add to order_items
+            // 1. Get current item for stock calculation
+            const { data: currentItem, error: fetchError } = await supabase
+                .from('inventory')
+                .select('current_stock')
+                .eq('id', item.inventoryId)
+                .single();
+
+            if (fetchError) throw fetchError;
+            const prevStock = currentItem.current_stock || 0;
+            const newStock = prevStock - item.quantity;
+
+            // 2. Add to order_items
             const { error: itemError } = await supabase
                 .from('order_items')
                 .insert([{
@@ -277,23 +323,25 @@ export const storage = {
 
             if (itemError) throw itemError;
 
-            // 2. Decrease stock in inventory
-            const { data: currentItem, error: fetchError } = await supabase
-                .from('inventory')
-                .select('current_stock')
-                .eq('id', item.inventoryId)
-                .single();
-
-            if (fetchError) throw fetchError;
-
-            const newStock = (currentItem.current_stock || 0) - item.quantity;
-
+            // 3. Decrease stock in inventory
             const { error: stockError } = await supabase
                 .from('inventory')
                 .update({ current_stock: newStock })
                 .eq('id', item.inventoryId);
 
             if (stockError) throw stockError;
+
+            // 4. Log movement
+            await supabase.from('inventory_logs').insert([{
+                inventory_id: item.inventoryId,
+                type: 'exit',
+                quantity: item.quantity,
+                prev_stock: prevStock,
+                new_stock: newStock,
+                order_id: orderId,
+                user_name: technicianName,
+                notes: `Consumido na OS #${orderId.slice(-6).toUpperCase()}`
+            }]);
         }
         window.dispatchEvent(new Event('inventory-update'));
     },
@@ -309,6 +357,24 @@ export const storage = {
 
         if (error) {
             console.error('Error fetching order items:', error);
+            return [];
+        }
+        return data || [];
+    },
+
+    getInventoryLogs: async (inventoryId = null) => {
+        let query = supabase.from('inventory_logs').select(`
+            *,
+            inventory:inventory_id (name)
+        `).order('created_at', { ascending: false });
+
+        if (inventoryId) {
+            query = query.eq('inventory_id', inventoryId);
+        }
+
+        const { data, error } = await query.limit(50);
+        if (error) {
+            console.error('Error fetching inventory logs:', error);
             return [];
         }
         return data || [];
