@@ -362,6 +362,20 @@ export const storage = {
         return data || [];
     },
 
+    reopenOrder: async (orderId) => {
+        const { error } = await supabase
+            .from('orders')
+            .update({
+                status: 'pending',
+                completed_at: null,
+                technician: null
+            })
+            .eq('id', orderId);
+
+        if (error) throw error;
+        window.dispatchEvent(new Event('storage-update'));
+    },
+
     getInventoryLogs: async (inventoryId = null) => {
         let query = supabase.from('inventory_logs').select(`
             *,

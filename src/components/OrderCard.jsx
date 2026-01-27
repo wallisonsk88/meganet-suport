@@ -100,19 +100,38 @@ export default function OrderCard({ os, onCompleteClick, onEditClick, onDeleteCl
                     )
                 ) : (
                     <div className="space-y-4">
-                        <div className="flex flex-wrap items-center gap-y-2 gap-x-6 border-t pt-4">
-                            <div className="flex items-center gap-2 text-sm">
-                                <span className="text-slate-400">Técnico:</span>
-                                <span className="font-bold text-emerald-700 flex items-center gap-1">
-                                    <User size={14} /> {os.technician}
-                                </span>
+                        <div className="flex flex-wrap items-center justify-between gap-y-2 border-t pt-4">
+                            <div className="flex flex-wrap items-center gap-y-2 gap-x-6">
+                                <div className="flex items-center gap-2 text-sm">
+                                    <span className="text-slate-400">Técnico:</span>
+                                    <span className="font-bold text-emerald-700 flex items-center gap-1">
+                                        <User size={14} /> {os.technician}
+                                    </span>
+                                </div>
+                                <div className="flex items-center gap-2 text-sm">
+                                    <span className="text-slate-400">Concluído em:</span>
+                                    <span className="font-medium text-slate-600">
+                                        {new Date(os.completedAt).toLocaleString('pt-BR')}
+                                    </span>
+                                </div>
                             </div>
-                            <div className="flex items-center gap-2 text-sm">
-                                <span className="text-slate-400">Concluído em:</span>
-                                <span className="font-medium text-slate-600">
-                                    {new Date(os.completedAt).toLocaleString('pt-BR')}
-                                </span>
-                            </div>
+
+                            {userRole === 'admin' && (
+                                <button
+                                    onClick={async () => {
+                                        if (window.confirm("Deseja realmente REABRIR esta ordem? Ela voltará para a lista de pendentes.")) {
+                                            try {
+                                                await storage.reopenOrder(os.id);
+                                            } catch (err) {
+                                                alert("Erro ao reabrir: " + err.message);
+                                            }
+                                        }
+                                    }}
+                                    className="text-xs font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1 bg-orange-50 px-3 py-1.5 rounded-lg transition-colors border border-orange-100"
+                                >
+                                    <Clock size={14} /> Reabrir OS
+                                </button>
+                            )}
                         </div>
 
                         {usedItems.length > 0 && (
