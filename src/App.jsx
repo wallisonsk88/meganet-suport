@@ -118,12 +118,19 @@ export default function App() {
     return roles[currentUser.role] || roles.tecnico;
   }, [currentUser]);
 
-  // 3. Logic & Sorting
+  // 3. Logic & Sorting - Prioritize completed recent ones at top
   const sortedOrders = useMemo(() => {
     return [...orders].sort((a, b) => {
-      if (a.status === 'pending' && b.status === 'completed') return -1;
-      if (a.status === 'completed' && b.status === 'pending') return 1;
+      // Priority 1: Status (Completed on top to show finished work)
+      if (a.status === 'completed' && b.status !== 'completed') return -1;
+      if (a.status !== 'completed' && b.status === 'completed') return 1;
 
+      // Priority 2: If both are completed, newest at top
+      if (a.status === 'completed' && b.status === 'completed') {
+        return new Date(b.completedAt) - new Date(a.completedAt);
+      }
+
+      // Priority 3: If both are pending (or others), sort by schedule (oldest first)
       const dateA = new Date(`${a.scheduledDate}T${a.scheduledTime}`);
       const dateB = new Date(`${b.scheduledDate}T${b.scheduledTime}`);
       return dateA - dateB;
