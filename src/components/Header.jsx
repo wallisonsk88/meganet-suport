@@ -1,7 +1,7 @@
 import React from 'react';
-import { Wifi, Plus, Settings, LogOut, BarChart2, User as UserIcon } from 'lucide-react';
+import { Wifi, Plus, Settings, LogOut, BarChart2, User as UserIcon, Package } from 'lucide-react';
 
-export default function Header({ user, onLogout, onAddClick, onManageUsersClick, onReportsClick, canCreate, canManageUsers }) {
+export default function Header({ user, onLogout, onAddClick, onManageUsersClick, onReportsClick, onInventoryClick, canCreate, canManageUsers }) {
     const getRoleLabel = (role) => {
         const roles = {
             admin: 'Admin',
@@ -33,6 +33,14 @@ export default function Header({ user, onLogout, onAddClick, onManageUsersClick,
                         </div>
 
                         <div className="flex items-center gap-1.5">
+                            <button
+                                onClick={onInventoryClick}
+                                className="p-2 text-slate-500 hover:text-orange-600 hover:bg-orange-50 rounded-xl transition-all"
+                                title="Controle de Estoque"
+                            >
+                                <Package size={22} />
+                            </button>
+
                             {canManageUsers && (
                                 <>
                                     <button

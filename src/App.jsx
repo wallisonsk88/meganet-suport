@@ -16,12 +16,14 @@ import UserManagementModal from './components/UserManagementModal';
 import Login from './components/Login';
 import ChatWidget from './components/ChatWidget';
 import AdminReportsModal from './components/AdminReportsModal';
+import InventoryModal from './components/InventoryModal';
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState(storage.getAuthenticatedUser());
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isInventoryModalOpen, setIsInventoryModalOpen] = useState(false);
   const [isUsersModalOpen, setIsUsersModalOpen] = useState(false);
   const [isReportsModalOpen, setIsReportsModalOpen] = useState(false);
   const [editingOrder, setEditingOrder] = useState(null);
@@ -183,6 +185,7 @@ export default function App() {
         onAddClick={handleAddClick}
         onManageUsersClick={() => setIsUsersModalOpen(true)}
         onReportsClick={() => setIsReportsModalOpen(true)}
+        onInventoryClick={() => setIsInventoryModalOpen(true)}
         canCreate={permissions.canCreate}
         canManageUsers={permissions.canManageUsers}
       />
@@ -231,6 +234,11 @@ export default function App() {
         user={currentUser}
         order={completingOrder}
         onClose={() => setCompletingOrder(null)}
+      />
+
+      <InventoryModal
+        isOpen={isInventoryModalOpen}
+        onClose={() => setIsInventoryModalOpen(false)}
       />
 
       <UserManagementModal

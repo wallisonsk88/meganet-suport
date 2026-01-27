@@ -199,6 +199,119 @@ export const storage = {
             .getPublicUrl(filePath);
 
         return data.publicUrl;
+    },
+
+    // --- INVENTORY ---
+    getInventory: async () => {
+        const { data, error } = await supabase
+            .from('inventory')
+            .select('*')
+            .order('name', { ascending: true });
+
+        if (error) {
+            console.error('Error fetching inventory:', error);
+            return [];
+        }
+        return data || [];
+    },
+
+    addInventoryItem: async (item) => {
+        const { data, error } = await supabase
+            .from('inventory')
+            .insert([{
+                name: item.name,
+                category: item.category,
+                description: item.description,
+                unit: item.unit,
+                current_stock: item.currentStock,
+                min_stock: item.minStock
+            }])
+            .select()
+            .single();
+
+        if (error) throw error;
+        window.dispatchEvent(new Event('inventory-update'));
+        return data;
+    },
+
+    updateInventoryItem: async (id, updates) => {
+        const mappedUpdates = {};
+        if (updates.name) mappedUpdates.name = updates.name;
+        if (updates.category) mappedUpdates.category = updates.category;
+        if (updates.description) mappedUpdates.description = updates.description;
+        if (updates.unit) mappedUpdates.unit = updates.unit;
+        if (updates.currentStock !== undefined) mappedUpdates.current_stock = updates.currentStock;
+        if (updates.minStock !== undefined) mappedUpdates.min_stock = updates.minStock;
+
+        const { error } = await supabase
+            .from('inventory')
+            .update(mappedUpdates)
+            .eq('id', id);
+
+        if (error) throw error;
+        window.dispatchEvent(new Event('inventory-update'));
+    },
+
+    deleteInventoryItem: async (id) => {
+        const { error } = await supabase
+            .from('inventory')
+            .delete()
+            .eq('id', id);
+
+        if (error) throw error;
+        window.dispatchEvent(new Event('inventory-update'));
+    },
+
+    addItemsToOrder: async (orderId, items) => {
+        // items is an array of { inventoryId, quantity, serialNumber }
+        for (const item of items) {
+            // 1. Add to order_items
+            const { error: itemError } = await supabase
+                .from('order_items')
+                .insert([{
+                    order_id: orderId,
+                    inventory_id: item.inventoryId,
+                    quantity: item.quantity,
+                    serial_number: item.serialNumber
+                }]);
+
+            if (itemError) throw itemError;
+
+            // 2. Decrease stock in inventory
+            const { data: currentItem, error: fetchError } = await supabase
+                .from('inventory')
+                .select('current_stock')
+                .eq('id', item.inventoryId)
+                .single();
+
+            if (fetchError) throw fetchError;
+
+            const newStock = (currentItem.current_stock || 0) - item.quantity;
+
+            const { error: stockError } = await supabase
+                .from('inventory')
+                .update({ current_stock: newStock })
+                .eq('id', item.inventoryId);
+
+            if (stockError) throw stockError;
+        }
+        window.dispatchEvent(new Event('inventory-update'));
+    },
+
+    getOrderItems: async (orderId) => {
+        const { data, error } = await supabase
+            .from('order_items')
+            .select(`
+                *,
+                inventory:inventory_id (name, unit)
+            `)
+            .eq('order_id', orderId);
+
+        if (error) {
+            console.error('Error fetching order items:', error);
+            return [];
+        }
+        return data || [];
     }
 };
 
