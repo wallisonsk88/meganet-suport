@@ -1,7 +1,7 @@
 import React from 'react';
 import { Wifi, Plus, Settings, LogOut, BarChart2, User as UserIcon, Package } from 'lucide-react';
 
-export default function Header({ user, onLogout, onAddClick, onManageUsersClick, onReportsClick, onInventoryClick, canCreate, canManageUsers }) {
+export default function Header({ user, onLogout, onAddClick, onManageUsersClick, onReportsClick, onInventoryClick, canCreate, canManageUsers, canViewInventory }) {
     const getRoleLabel = (role) => {
         const roles = {
             admin: 'Admin',
@@ -33,13 +33,15 @@ export default function Header({ user, onLogout, onAddClick, onManageUsersClick,
                         </div>
 
                         <div className="flex items-center gap-1.5">
-                            <button
-                                onClick={onInventoryClick}
-                                className="p-2 text-slate-500 hover:text-orange-600 hover:bg-orange-50 rounded-xl transition-all"
-                                title="Controle de Estoque"
-                            >
-                                <Package size={22} />
-                            </button>
+                            {canViewInventory && (
+                                <button
+                                    onClick={onInventoryClick}
+                                    className="p-2 text-slate-500 hover:text-orange-600 hover:bg-orange-50 rounded-xl transition-all"
+                                    title="Controle de Estoque"
+                                >
+                                    <Package size={22} />
+                                </button>
+                            )}
 
                             {canManageUsers && (
                                 <>
@@ -95,13 +97,15 @@ export default function Header({ user, onLogout, onAddClick, onManageUsersClick,
                         </div>
                     </div>
                     <div className="flex gap-2">
-                        <button
-                            onClick={onInventoryClick}
-                            className="p-1.5 text-orange-600 bg-orange-50 rounded-lg border border-orange-100"
-                            title="Estoque"
-                        >
-                            <Package size={18} />
-                        </button>
+                        {canViewInventory && (
+                            <button
+                                onClick={onInventoryClick}
+                                className="p-1.5 text-orange-600 bg-orange-50 rounded-lg border border-orange-100"
+                                title="Estoque"
+                            >
+                                <Package size={18} />
+                            </button>
+                        )}
                         {canManageUsers && (
                             <>
                                 <button
