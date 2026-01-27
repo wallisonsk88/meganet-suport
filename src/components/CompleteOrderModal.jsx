@@ -60,9 +60,14 @@ export default function CompleteOrderModal({ order, user, onClose }) {
         ));
     };
 
+    const [isCompleting, setIsCompleting] = useState(false);
+
     if (!order) return null;
 
     const handleCompleteOrder = async () => {
+        if (isCompleting) return; // Prevent double execution
+
+        setIsCompleting(true);
         try {
             // 1. Save items used and update stock
             if (selectedItems.length > 0) {
@@ -81,6 +86,8 @@ export default function CompleteOrderModal({ order, user, onClose }) {
         } catch (err) {
             console.error("Error completing order:", err);
             alert("Erro ao finalizar ordem: " + err.message);
+        } finally {
+            setIsCompleting(false);
         }
     };
 
@@ -195,9 +202,10 @@ export default function CompleteOrderModal({ order, user, onClose }) {
                     </button>
                     <button
                         onClick={handleCompleteOrder}
-                        className="flex-[2] bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-2xl transition-colors shadow-lg shadow-emerald-200 disabled:opacity-50"
+                        disabled={isCompleting}
+                        className="flex-[2] bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-2xl transition-colors shadow-lg shadow-emerald-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        Finalizar e Baixar Estoque
+                        {isCompleting ? "Finalizando..." : "Finalizar e Baixar Estoque"}
                     </button>
                 </div>
             </div>
