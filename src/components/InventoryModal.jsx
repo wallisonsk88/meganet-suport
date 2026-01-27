@@ -9,6 +9,7 @@ export default function InventoryModal({ isOpen, onClose, user }) {
     const [isAdding, setIsAdding] = useState(false);
     const [viewMode, setViewMode] = useState('list'); // 'list' or 'history'
     const [history, setHistory] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
     const [newItem, setNewItem] = useState({
         name: '',
         category: 'Equipamento',
@@ -95,6 +96,11 @@ export default function InventoryModal({ isOpen, onClose, user }) {
         }
     };
 
+    const filteredInventory = inventory.filter(item =>
+        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.category.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     if (!isOpen) return null;
 
     return (
@@ -151,6 +157,18 @@ export default function InventoryModal({ isOpen, onClose, user }) {
                 <div className="flex-1 overflow-auto p-6">
                     {viewMode === 'list' ? (
                         <>
+                            {/* Search Bar */}
+                            <div className="mb-6 relative">
+                                <input
+                                    type="text"
+                                    placeholder="Pesquisar item no estoque..."
+                                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-orange-500 outline-none transition-all"
+                                    value={searchTerm}
+                                    onChange={e => setSearchTerm(e.target.value)}
+                                />
+                                <Package className="absolute left-3 top-3 text-slate-400" size={18} />
+                            </div>
+
                             {/* Add Form */}
                             {isAdding && isAdmin && (
                                 <form onSubmit={handleAddItem} className="mb-8 bg-orange-50 p-6 rounded-2xl border border-orange-100 animate-in slide-in-from-top-4 duration-200">
@@ -241,7 +259,7 @@ export default function InventoryModal({ isOpen, onClose, user }) {
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-100">
-                                            {inventory.map((item) => {
+                                            {filteredInventory.map((item) => {
                                                 const isLow = item.current_stock <= item.min_stock;
                                                 return (
                                                     <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group">
