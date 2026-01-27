@@ -154,19 +154,25 @@ export default function CompleteOrderModal({ order, user, onClose }) {
                                 Adicionar Material do Estoque
                             </div>
                             <div className="max-h-32 overflow-auto divide-y divide-slate-100">
-                                {inventory.map((item) => (
-                                    <div
-                                        key={item.id}
-                                        className="px-4 py-2 flex items-center justify-between hover:bg-orange-50 cursor-pointer transition-colors"
-                                        onClick={() => handleAddItem(item)}
-                                    >
-                                        <div>
-                                            <p className="text-xs font-bold text-slate-700">{item.name}</p>
-                                            <p className="text-[10px] text-slate-400">{item.current_stock} {item.unit} disponíveis</p>
+                                {isInventoryLoading ? (
+                                    <div className="p-4 text-center text-xs text-slate-400">Carregando estoque...</div>
+                                ) : inventory.length === 0 ? (
+                                    <div className="p-4 text-center text-xs text-slate-400">Nenhum item encontrado no estoque.</div>
+                                ) : (
+                                    inventory.map((item) => (
+                                        <div
+                                            key={item.id}
+                                            className="px-4 py-2 flex items-center justify-between hover:bg-orange-50 cursor-pointer transition-colors"
+                                            onClick={() => handleAddItem(item)}
+                                        >
+                                            <div>
+                                                <p className="text-xs font-bold text-slate-700">{item.name}</p>
+                                                <p className="text-[10px] text-slate-400">{item.current_stock} {item.unit} disponíveis</p>
+                                            </div>
+                                            <Plus size={16} className="text-orange-600" />
                                         </div>
-                                        <Plus size={16} className="text-orange-600" />
-                                    </div>
-                                ))}
+                                    ))
+                                )}
                             </div>
                         </div>
                     </div>
