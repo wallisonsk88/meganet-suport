@@ -120,13 +120,27 @@ export default function App() {
 
   // 3. Logic & Sorting - Pending first, then completed (recently finished at top of its group)
   const sortedOrders = useMemo(() => {
+    const priorityWeight = {
+      'Urgente': 4,
+      'Alta': 3,
+      'Média': 2,
+      'Baixa': 1
+    };
+
     return [...orders].sort((a, b) => {
       // Priority 1: Status (Pending on top, Completed below)
       if (a.status === 'pending' && b.status !== 'pending') return -1;
       if (a.status !== 'pending' && b.status === 'pending') return 1;
 
-      // Priority 2: If both are pending, sort by schedule (oldest first - timeline)
+      // Priority 2: If both are pending (The Core of the request)
       if (a.status === 'pending' && b.status === 'pending') {
+        const weightA = priorityWeight[a.priority || 'Média'] || 2;
+        const weightB = priorityWeight[b.priority || 'Média'] || 2;
+
+        // If priorities are different, sort by priority weight (DESC - higher weight first)
+        if (weightA !== weightB) return weightB - weightA;
+
+        // If priorities are same, sort by schedule (ASC - oldest first for timeline)
         const dateA = new Date(`${a.scheduledDate}T${a.scheduledTime}`);
         const dateB = new Date(`${b.scheduledDate}T${b.scheduledTime}`);
         return dateA - dateB;

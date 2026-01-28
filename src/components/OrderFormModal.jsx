@@ -8,6 +8,7 @@ export default function OrderFormModal({ user, isOpen, onClose, editOrder = null
         address: '',
         serviceType: 'Instalação',
         description: '',
+        priority: 'Média',
         scheduledDate: '',
         scheduledTime: ''
     });
@@ -19,6 +20,7 @@ export default function OrderFormModal({ user, isOpen, onClose, editOrder = null
                 address: editOrder.address || '',
                 serviceType: editOrder.serviceType || 'Instalação',
                 description: editOrder.description || '',
+                priority: editOrder.priority || 'Média',
                 scheduledDate: editOrder.scheduledDate || '',
                 scheduledTime: editOrder.scheduledTime || ''
             });
@@ -28,6 +30,7 @@ export default function OrderFormModal({ user, isOpen, onClose, editOrder = null
                 address: '',
                 serviceType: 'Instalação',
                 description: '',
+                priority: 'Média',
                 scheduledDate: '',
                 scheduledTime: ''
             });
@@ -95,7 +98,7 @@ export default function OrderFormModal({ user, isOpen, onClose, editOrder = null
                             <div>
                                 <label className="block text-sm font-bold text-slate-700 mb-1">Tipo de Serviço</label>
                                 <select
-                                    className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-orange-500 outline-none bg-white"
+                                    className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-orange-500 outline-none bg-white font-medium"
                                     value={orderData.serviceType}
                                     onChange={e => setOrderData({ ...orderData, serviceType: e.target.value })}
                                 >
@@ -107,7 +110,23 @@ export default function OrderFormModal({ user, isOpen, onClose, editOrder = null
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-sm font-bold text-slate-700 mb-1">Prioridade/Hora</label>
+                                <label className="block text-sm font-bold text-slate-700 mb-1">Prioridade</label>
+                                <select
+                                    className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-orange-500 outline-none bg-white font-medium"
+                                    value={orderData.priority}
+                                    onChange={e => setOrderData({ ...orderData, priority: e.target.value })}
+                                >
+                                    <option>Baixa</option>
+                                    <option>Média</option>
+                                    <option>Alta</option>
+                                    <option className="text-red-600 font-bold">Urgente</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-1">Hora Agendada</label>
                                 <input
                                     type="time"
                                     required
@@ -116,16 +135,16 @@ export default function OrderFormModal({ user, isOpen, onClose, editOrder = null
                                     onChange={e => setOrderData({ ...orderData, scheduledTime: e.target.value })}
                                 />
                             </div>
-                        </div>
-                        <div>
-                            <label className="block text-sm font-bold text-slate-700 mb-1">Data Agendada</label>
-                            <input
-                                type="date"
-                                required
-                                className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-orange-500 outline-none"
-                                value={orderData.scheduledDate}
-                                onChange={e => setOrderData({ ...orderData, scheduledDate: e.target.value })}
-                            />
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-1">Data Agendada</label>
+                                <input
+                                    type="date"
+                                    required
+                                    className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-orange-500 outline-none"
+                                    value={orderData.scheduledDate}
+                                    onChange={e => setOrderData({ ...orderData, scheduledDate: e.target.value })}
+                                />
+                            </div>
                         </div>
                         <div>
                             <label className="block text-sm font-bold text-slate-700 mb-1">Detalhes do Serviço</label>

@@ -55,7 +55,8 @@ export const storage = {
             scheduledDate: order.scheduled_date,
             scheduledTime: order.scheduled_time,
             createdBy: order.created_by,
-            completedAt: order.completed_at
+            completedAt: order.completed_at,
+            priority: order.priority || 'Média'
         }));
     },
 
@@ -69,6 +70,7 @@ export const storage = {
                 description: order.description,
                 scheduled_date: order.scheduledDate,
                 scheduled_time: order.scheduledTime,
+                priority: order.priority || 'Média',
                 status: 'pending',
                 created_by: order.createdBy
             }])
@@ -89,6 +91,7 @@ export const storage = {
         if (updates.description) mappedUpdates.description = updates.description;
         if (updates.scheduledDate) mappedUpdates.scheduled_date = updates.scheduledDate;
         if (updates.scheduledTime) mappedUpdates.scheduled_time = updates.scheduledTime;
+        if (updates.priority) mappedUpdates.priority = updates.priority;
         if (updates.status) mappedUpdates.status = updates.status;
         if (updates.resolution) mappedUpdates.resolution = updates.resolution;
         if (updates.technician) mappedUpdates.technician = updates.technician;
@@ -101,6 +104,7 @@ export const storage = {
         if (updates.scheduled_time) mappedUpdates.scheduled_time = updates.scheduled_time;
         if (updates.completed_at) mappedUpdates.completed_at = updates.completed_at;
         if (updates.created_by) mappedUpdates.created_by = updates.created_by;
+        if (updates.priority) mappedUpdates.priority = updates.priority;
 
         const { error } = await supabase
             .from('orders')

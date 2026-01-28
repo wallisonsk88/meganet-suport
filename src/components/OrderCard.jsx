@@ -43,6 +43,13 @@ export default function OrderCard({ os, onCompleteClick, onEditClick, onDeleteCl
                                             'bg-purple-100 text-purple-700'}`}>
                                 {os.serviceType}
                             </span>
+                            <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border
+                ${os.priority === 'Baixa' ? 'bg-slate-100 text-slate-600 border-slate-200' :
+                                    os.priority === 'Alta' ? 'bg-orange-50 text-orange-700 border-orange-100' :
+                                        os.priority === 'Urgente' ? 'bg-red-600 text-white border-red-700 animate-pulse' :
+                                            'bg-blue-50 text-blue-700 border-blue-100'}`}>
+                                {os.priority || 'Média'}
+                            </span>
                             <span className="text-xs text-slate-400 font-mono">#{os.id?.slice(-6).toUpperCase()}</span>
                         </div>
                         <div className="flex items-center justify-between">
