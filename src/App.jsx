@@ -17,9 +17,13 @@ import Login from './components/Login';
 import ChatWidget from './components/ChatWidget';
 import AdminReportsModal from './components/AdminReportsModal';
 import InventoryModal from './components/InventoryModal';
+import { useTechnicianTracking } from './hooks/useTechnicianTracking';
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState(storage.getAuthenticatedUser());
+
+  // Ativa o rastreamento se for técnico
+  useTechnicianTracking(currentUser);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -211,6 +215,7 @@ export default function App() {
         onManageUsersClick={() => setIsUsersModalOpen(true)}
         onReportsClick={() => setIsReportsModalOpen(true)}
         onInventoryClick={() => setIsInventoryModalOpen(true)}
+        onMapClick={() => setIsMapModalOpen(true)}
         canCreate={permissions.canCreate}
         canManageUsers={permissions.canManageUsers}
         canViewInventory={permissions.canViewInventory}
@@ -277,6 +282,11 @@ export default function App() {
         isOpen={isReportsModalOpen}
         onClose={() => setIsReportsModalOpen(false)}
         orders={orders}
+      />
+
+      <MapModal
+        isOpen={isMapModalOpen}
+        onClose={() => setIsMapModalOpen(false)}
       />
 
       <ChatWidget user={currentUser} />

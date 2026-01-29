@@ -1,7 +1,7 @@
 import React from 'react';
 import { Wifi, Plus, Settings, LogOut, BarChart2, User as UserIcon, Package } from 'lucide-react';
 
-export default function Header({ user, onLogout, onAddClick, onManageUsersClick, onReportsClick, onInventoryClick, canCreate, canManageUsers, canViewInventory }) {
+export default function Header({ user, onLogout, onAddClick, onManageUsersClick, onReportsClick, onInventoryClick, onMapClick, canCreate, canManageUsers, canViewInventory }) {
     const getRoleLabel = (role) => {
         const roles = {
             admin: 'Admin',
@@ -45,6 +45,13 @@ export default function Header({ user, onLogout, onAddClick, onManageUsersClick,
 
                             {canManageUsers && (
                                 <>
+                                    <button
+                                        onClick={onMapClick}
+                                        className="p-2 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                                        title="Mapa Técnico"
+                                    >
+                                        <MapIcon size={22} />
+                                    </button>
                                     <button
                                         onClick={onReportsClick}
                                         className="p-2 text-slate-500 hover:text-orange-600 hover:bg-orange-50 rounded-xl transition-all"

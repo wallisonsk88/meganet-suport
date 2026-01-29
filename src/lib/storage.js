@@ -396,6 +396,40 @@ export const storage = {
             return [];
         }
         return data || [];
+    },
+
+    // --- MAPS & TRACKING ---
+    saveTechnicianLocation: async (userId, userName, lat, lng) => {
+        const { error } = await supabase
+            .from('technician_locations')
+            .insert([{
+                user_id: userId,
+                user_name: userName,
+                lat,
+                lng
+            }]);
+
+        if (error) {
+            console.error('Error saving location:', error);
+            throw error;
+        }
+    },
+
+    getTechnicianLocations: async (minutesAgo = 60) => {
+        const timeLimit = new Date();
+        timeLimit.setMinutes(timeLimit.getMinutes() - minutesAgo);
+
+        const { data, error } = await supabase
+            .from('technician_locations')
+            .select('*')
+            .gte('created_at', timeLimit.toISOString())
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error('Error fetching locations:', error);
+            return [];
+        }
+        return data || [];
     }
 };
 
