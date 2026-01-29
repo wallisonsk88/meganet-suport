@@ -1,5 +1,5 @@
 import React from 'react';
-import { Wifi, Plus, Settings, LogOut, BarChart2, User as UserIcon, Package } from 'lucide-react';
+import { Wifi, Plus, Settings, LogOut, BarChart2, User as UserIcon, Package, Map as MapIcon } from 'lucide-react';
 
 export default function Header({ user, onLogout, onAddClick, onManageUsersClick, onReportsClick, onInventoryClick, onMapClick, canCreate, canManageUsers, canViewInventory }) {
     const getRoleLabel = (role) => {
