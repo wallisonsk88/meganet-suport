@@ -17,6 +17,7 @@ import Login from './components/Login';
 import ChatWidget from './components/ChatWidget';
 import AdminReportsModal from './components/AdminReportsModal';
 import InventoryModal from './components/InventoryModal';
+import MapModal from './components/MapModal';
 import { useTechnicianTracking } from './hooks/useTechnicianTracking';
 
 export default function App() {
@@ -30,6 +31,7 @@ export default function App() {
   const [isInventoryModalOpen, setIsInventoryModalOpen] = useState(false);
   const [isUsersModalOpen, setIsUsersModalOpen] = useState(false);
   const [isReportsModalOpen, setIsReportsModalOpen] = useState(false);
+  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
   const [editingOrder, setEditingOrder] = useState(null);
   const [completingOrder, setCompletingOrder] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
