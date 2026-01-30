@@ -117,9 +117,9 @@ export default function App() {
   const permissions = useMemo(() => {
     if (!currentUser) return null;
     const roles = {
-      admin: { canCreate: true, canEdit: true, canDelete: true, canComplete: true, canManageUsers: true, canViewInventory: true },
-      recepcao: { canCreate: true, canEdit: true, canDelete: true, canComplete: false, canManageUsers: false, canViewInventory: true },
-      tecnico: { canCreate: false, canEdit: false, canDelete: false, canComplete: true, canManageUsers: false, canViewInventory: true }
+      admin: { canCreate: true, canEdit: true, canDelete: true, canComplete: true, canManageUsers: true, canViewInventory: true, canViewMap: true },
+      recepcao: { canCreate: true, canEdit: true, canDelete: true, canComplete: false, canManageUsers: false, canViewInventory: true, canViewMap: true },
+      tecnico: { canCreate: false, canEdit: false, canDelete: false, canComplete: true, canManageUsers: false, canViewInventory: true, canViewMap: false }
     };
     return roles[currentUser.role] || roles.tecnico;
   }, [currentUser]);
@@ -221,6 +221,7 @@ export default function App() {
         canCreate={permissions.canCreate}
         canManageUsers={permissions.canManageUsers}
         canViewInventory={permissions.canViewInventory}
+        canViewMap={permissions.canViewMap}
       />
 
       <main className="max-w-4xl mx-auto px-4 py-6">

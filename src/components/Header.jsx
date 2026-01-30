@@ -43,15 +43,18 @@ export default function Header({ user, onLogout, onAddClick, onManageUsersClick,
                                 </button>
                             )}
 
+                            {canViewMap && (
+                                <button
+                                    onClick={onMapClick}
+                                    className="p-2 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                                    title="Mapa Técnico"
+                                >
+                                    <MapIcon size={22} />
+                                </button>
+                            )}
+
                             {canManageUsers && (
                                 <>
-                                    <button
-                                        onClick={onMapClick}
-                                        className="p-2 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
-                                        title="Mapa Técnico"
-                                    >
-                                        <MapIcon size={22} />
-                                    </button>
                                     <button
                                         onClick={onReportsClick}
                                         className="p-2 text-slate-500 hover:text-orange-600 hover:bg-orange-50 rounded-xl transition-all"
@@ -104,6 +107,15 @@ export default function Header({ user, onLogout, onAddClick, onManageUsersClick,
                         </div>
                     </div>
                     <div className="flex gap-2">
+                        {canViewMap && (
+                            <button
+                                onClick={onMapClick}
+                                className="p-1.5 text-blue-600 bg-blue-50 rounded-lg border border-blue-100"
+                                title="Mapa"
+                            >
+                                <MapIcon size={18} />
+                            </button>
+                        )}
                         {canViewInventory && (
                             <button
                                 onClick={onInventoryClick}
