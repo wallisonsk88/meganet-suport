@@ -65,20 +65,21 @@ export default function OrderCard({ os, onCompleteClick, onEditClick, onDeleteCl
     const serviceStyle = getServiceTypeStyles(os.serviceType);
 
     return (
-        <div className="relative group">
-            {/* Timeline Dot */}
-            <div className={`absolute -left-12 top-0 w-8 h-8 rounded-full border-4 border-slate-950 flex items-center justify-center transition-colors shadow-sm text-white
-        ${os.status === 'completed' ? 'bg-emerald-500' : serviceStyle.dotPending}`}>
-                {os.status === 'completed' ? <Check size={16} /> : <Clock size={16} />}
-            </div>
-
+        <div className="relative group min-w-[300px]">
             {/* Card */}
             <div className={`bg-slate-900 rounded-2xl p-5 shadow-lg shadow-black/20 border transition-all hover:shadow-xl hover:shadow-black/30 ${serviceStyle.borderLeft}
         ${os.status === 'completed' ? 'border-y-emerald-900/30 border-r-emerald-900/30 opacity-80' : 'border-y-slate-800 border-r-slate-800'}`}>
 
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-4">
                     <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1 border-transparent">
+                        <div className="flex flex-wrap items-center gap-2 mb-2 border-transparent">
+                            
+                            {/* Status Icon */}
+                            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white
+                                ${os.status === 'completed' ? 'bg-emerald-500' : serviceStyle.dotPending}`} title={os.status === 'completed' ? 'Concluída' : 'Pendente'}>
+                                {os.status === 'completed' ? <Check size={12} /> : <Clock size={12} />}
+                            </div>
+
                             <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border ${serviceStyle.chip}`}>
                                 {os.serviceType}
                             </span>

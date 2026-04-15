@@ -164,6 +164,12 @@ export default function App() {
     );
   }, [orders, searchTerm]);
 
+  const kanbanColumns = useMemo(() => {
+    const standardTypes = ['Instalação', 'Suporte', 'Pagamento', 'Mudança de Endereço', 'Troca de Equipamento'];
+    const dynamicTypes = Array.from(new Set(orders.map(o => o.serviceType || 'Outros')));
+    return Array.from(new Set([...standardTypes, ...dynamicTypes]));
+  }, [orders]);
+
   // Handlers
   const handleAddClick = () => {
     if (!permissions?.canCreate) return;
@@ -224,32 +230,54 @@ export default function App() {
         canViewMap={permissions.canViewMap}
       />
 
-      <main className="max-w-4xl mx-auto px-4 py-6">
+      <main className="w-full max-w-[1400px] mx-auto px-4 py-6">
         {/* Search & Stats */}
-        <div className="flex flex-col md:flex-row gap-4 mb-8">
+        <div className="flex flex-col md:flex-row gap-4 mb-8 max-w-4xl">
           <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
           <StatsBar orders={orders} />
         </div>
 
-        {/* Timeline */}
-        <div className="relative border-l-2 border-slate-800 ml-4 pl-8 space-y-8">
+        {/* Kanban Board */}
+        <div className="flex gap-6 overflow-x-auto pb-8 snap-x snap-mandatory min-h-[500px]">
           {sortedOrders.length === 0 ? (
-            <div className="bg-slate-900 p-8 rounded-2xl border border-dashed border-slate-800 text-center -ml-12">
-              <FileText className="mx-auto text-slate-600 mb-2" size={48} />
-              <p className="text-slate-400">Nenhuma ordem de serviço encontrada.</p>
+            <div className="w-full max-w-4xl bg-slate-900 p-12 rounded-3xl border border-dashed border-slate-800 text-center flex flex-col items-center justify-center">
+              <FileText className="text-slate-700 mb-4" size={64} />
+              <p className="text-xl font-bold text-slate-400 mb-2">Nenhuma OS encontrada</p>
+              <p className="text-sm text-slate-500">Crie uma nova Ordem de Serviço para popular o painel.</p>
             </div>
           ) : (
-            sortedOrders.map((os) => (
-              <OrderCard
-                key={os.id}
-                os={os}
-                onCompleteClick={(order) => setCompletingOrder(order)}
-                onEditClick={handleEditClick}
-                onDeleteClick={(id) => handleDeleteClick(id, os.status)}
-                permissions={permissions}
-                userRole={currentUser?.role}
-              />
-            ))
+            kanbanColumns.map(type => {
+              const columnOrders = sortedOrders.filter(os => (os.serviceType || 'Outros') === type);
+              
+              if (columnOrders.length === 0) return null;
+
+              return (
+                <div key={type} className="flex-shrink-0 w-[320px] sm:w-[350px] snap-center flex flex-col gap-4">
+                  {/* Column Header */}
+                  <div className="bg-slate-900 border-t-4 border-t-slate-700 border-x border-b border-slate-800 rounded-xl p-3 px-4 flex items-center justify-between shadow-sm sticky top-0 z-0">
+                    <h3 className="font-bold text-slate-200 uppercase text-[11px] tracking-wider">{type}</h3>
+                    <span className="bg-slate-800 text-slate-400 text-[10px] font-black px-2.5 py-1 rounded-md border border-slate-700">
+                      {columnOrders.length}
+                    </span>
+                  </div>
+                  
+                  {/* Column Cards */}
+                  <div className="flex flex-col gap-4">
+                    {columnOrders.map((os) => (
+                      <OrderCard
+                        key={os.id}
+                        os={os}
+                        onCompleteClick={(order) => setCompletingOrder(order)}
+                        onEditClick={handleEditClick}
+                        onDeleteClick={(id) => handleDeleteClick(id, os.status)}
+                        permissions={permissions}
+                        userRole={currentUser?.role}
+                      />
+                    ))}
+                  </div>
+                </div>
+              );
+            })
           )}
         </div>
       </main>
