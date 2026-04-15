@@ -198,7 +198,7 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-100">
+      <div className="flex items-center justify-center min-h-screen bg-slate-900">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600"></div>
       </div>
     );
@@ -209,7 +209,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 text-slate-900 font-sans pb-20">
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans pb-20">
       <Header
         user={currentUser}
         onLogout={handleLogout}
@@ -232,11 +232,11 @@ export default function App() {
         </div>
 
         {/* Timeline */}
-        <div className="relative border-l-2 border-slate-200 ml-4 pl-8 space-y-8">
+        <div className="relative border-l-2 border-slate-800 ml-4 pl-8 space-y-8">
           {sortedOrders.length === 0 ? (
-            <div className="bg-white p-8 rounded-2xl border border-dashed border-slate-300 text-center -ml-12">
-              <FileText className="mx-auto text-slate-300 mb-2" size={48} />
-              <p className="text-slate-500">Nenhuma ordem de serviço encontrada.</p>
+            <div className="bg-slate-900 p-8 rounded-2xl border border-dashed border-slate-800 text-center -ml-12">
+              <FileText className="mx-auto text-slate-600 mb-2" size={48} />
+              <p className="text-slate-400">Nenhuma ordem de serviço encontrada.</p>
             </div>
           ) : (
             sortedOrders.map((os) => (

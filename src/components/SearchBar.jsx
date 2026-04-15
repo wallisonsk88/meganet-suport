@@ -10,7 +10,7 @@ export default function SearchBar({ searchTerm, setSearchTerm }) {
                 placeholder="Buscar cliente ou endereço..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
             />
         </div>
     );

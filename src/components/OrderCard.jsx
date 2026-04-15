@@ -67,14 +67,14 @@ export default function OrderCard({ os, onCompleteClick, onEditClick, onDeleteCl
     return (
         <div className="relative group">
             {/* Timeline Dot */}
-            <div className={`absolute -left-12 top-0 w-8 h-8 rounded-full border-4 border-slate-100 flex items-center justify-center transition-colors shadow-sm text-white
+            <div className={`absolute -left-12 top-0 w-8 h-8 rounded-full border-4 border-slate-950 flex items-center justify-center transition-colors shadow-sm text-white
         ${os.status === 'completed' ? 'bg-emerald-500' : serviceStyle.dotPending}`}>
                 {os.status === 'completed' ? <Check size={16} /> : <Clock size={16} />}
             </div>
 
             {/* Card */}
-            <div className={`bg-white rounded-2xl p-5 shadow-sm border transition-all hover:shadow-md ${serviceStyle.borderLeft}
-        ${os.status === 'completed' ? 'border-y-emerald-100 border-r-emerald-100 opacity-80' : 'border-y-slate-200 border-r-slate-200'}`}>
+            <div className={`bg-slate-900 rounded-2xl p-5 shadow-lg shadow-black/20 border transition-all hover:shadow-xl hover:shadow-black/30 ${serviceStyle.borderLeft}
+        ${os.status === 'completed' ? 'border-y-emerald-900/30 border-r-emerald-900/30 opacity-80' : 'border-y-slate-800 border-r-slate-800'}`}>
 
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-4">
                     <div className="flex-1">
@@ -83,21 +83,21 @@ export default function OrderCard({ os, onCompleteClick, onEditClick, onDeleteCl
                                 {os.serviceType}
                             </span>
                             <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border
-                ${os.priority === 'Baixa' ? 'bg-slate-100 text-slate-600 border-slate-200' :
-                                    os.priority === 'Alta' ? 'bg-orange-50 text-orange-700 border-orange-100' :
-                                        os.priority === 'Urgente' ? 'bg-red-600 text-white border-red-700 animate-pulse' :
-                                            'bg-blue-50 text-blue-700 border-blue-100'}`}>
+                ${os.priority === 'Baixa' ? 'bg-slate-800 text-slate-400 border-slate-700' :
+                                    os.priority === 'Alta' ? 'bg-orange-900/30 text-orange-400 border-orange-900/50' :
+                                        os.priority === 'Urgente' ? 'bg-red-900 border-red-700 text-white animate-pulse' :
+                                            'bg-blue-900/30 text-blue-400 border-blue-900/50'}`}>
                                 {os.priority || 'Média'}
                             </span>
-                            <span className="text-xs text-slate-400 font-mono">#{os.id?.slice(-6).toUpperCase()}</span>
+                            <span className="text-xs text-slate-500 font-mono">#{os.id?.slice(-6).toUpperCase()}</span>
                         </div>
                         <div className="flex items-center justify-between">
-                            <h3 className="text-lg font-bold text-slate-800">{os.customer}</h3>
+                            <h3 className="text-lg font-bold text-slate-100">{os.customer}</h3>
                             <div className="flex items-center gap-1">
                                 {os.status === 'pending' && canEdit && (
                                     <button
                                         onClick={() => onEditClick(os)}
-                                        className="p-1.5 text-slate-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                                        className="p-1.5 text-slate-400 hover:text-orange-400 hover:bg-orange-900/30 rounded-lg transition-colors"
                                         title="Editar OS"
                                     >
                                         <Edit2 size={18} />
@@ -106,7 +106,7 @@ export default function OrderCard({ os, onCompleteClick, onEditClick, onDeleteCl
                                 {canDelete && (os.status !== 'completed' || userRole === 'admin') && (
                                     <button
                                         onClick={() => onDeleteClick(os.id)}
-                                        className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                        className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-900/30 rounded-lg transition-colors"
                                         title="Excluir OS"
                                     >
                                         <Trash2 size={18} />
@@ -114,13 +114,13 @@ export default function OrderCard({ os, onCompleteClick, onEditClick, onDeleteCl
                                 )}
                             </div>
                         </div>
-                        <p className="text-sm text-slate-500 flex items-center gap-1">
+                        <p className="text-sm text-slate-400 flex items-center gap-1">
                             <User size={14} className="shrink-0" /> {os.address}
                         </p>
                     </div>
 
                     <div className="flex flex-col items-end text-right">
-                        <div className="flex items-center gap-2 text-slate-600 font-semibold bg-slate-100 px-3 py-1 rounded-lg">
+                        <div className="flex items-center gap-2 text-slate-300 font-semibold bg-slate-800 px-3 py-1 rounded-lg border border-slate-700">
                             <Calendar size={14} />
                             <span>{new Date(os.scheduledDate).toLocaleDateString('pt-BR')}</span>
                             <Clock size={14} className="ml-1" />
@@ -129,8 +129,8 @@ export default function OrderCard({ os, onCompleteClick, onEditClick, onDeleteCl
                     </div>
                 </div>
 
-                <div className="bg-slate-100 rounded-lg p-3 mb-4 text-sm text-slate-700 border border-slate-100">
-                    <p className="font-medium mb-1 flex items-center gap-1"><FileText size={14} /> Descrição:</p>
+                <div className="bg-slate-800 rounded-lg p-3 mb-4 text-sm text-slate-300 border border-slate-700">
+                    <p className="font-medium mb-1 flex items-center gap-1 text-slate-400"><FileText size={14} /> Descrição:</p>
                     {os.description}
                 </div>
 
@@ -138,7 +138,7 @@ export default function OrderCard({ os, onCompleteClick, onEditClick, onDeleteCl
                     canComplete && (
                         <button
                             onClick={() => onCompleteClick(os)}
-                            className="w-full sm:w-auto bg-slate-900 hover:bg-black text-white px-6 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-colors"
+                            className="w-full sm:w-auto bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white px-6 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-colors"
                         >
                             <CheckCircle2 size={18} />
                             Finalizar Atendimento
@@ -146,17 +146,17 @@ export default function OrderCard({ os, onCompleteClick, onEditClick, onDeleteCl
                     )
                 ) : (
                     <div className="space-y-4">
-                        <div className="flex flex-wrap items-center justify-between gap-y-2 border-t pt-4">
+                        <div className="flex flex-wrap items-center justify-between gap-y-2 border-t border-slate-800 pt-4">
                             <div className="flex flex-wrap items-center gap-y-2 gap-x-6">
                                 <div className="flex items-center gap-2 text-sm">
-                                    <span className="text-slate-400">Técnico:</span>
-                                    <span className="font-bold text-emerald-700 flex items-center gap-1">
+                                    <span className="text-slate-500">Técnico:</span>
+                                    <span className="font-bold text-emerald-500 flex items-center gap-1">
                                         <User size={14} /> {os.technician}
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-2 text-sm">
-                                    <span className="text-slate-400">Concluído em:</span>
-                                    <span className="font-medium text-slate-600">
+                                    <span className="text-slate-500">Concluído em:</span>
+                                    <span className="font-medium text-slate-400">
                                         {new Date(os.completedAt).toLocaleString('pt-BR')}
                                     </span>
                                 </div>
@@ -173,7 +173,7 @@ export default function OrderCard({ os, onCompleteClick, onEditClick, onDeleteCl
                                             }
                                         }
                                     }}
-                                    className="text-xs font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1 bg-orange-50 px-3 py-1.5 rounded-lg transition-colors border border-orange-100"
+                                    className="text-xs font-bold text-orange-400 hover:text-orange-300 flex items-center gap-1 bg-orange-900/20 px-3 py-1.5 rounded-lg transition-colors border border-orange-900/30"
                                 >
                                     <Clock size={14} /> Reabrir OS
                                 </button>
@@ -181,15 +181,15 @@ export default function OrderCard({ os, onCompleteClick, onEditClick, onDeleteCl
                         </div>
 
                         {usedItems.length > 0 && (
-                            <div className="bg-emerald-50/50 rounded-xl p-3 border border-emerald-100/50">
-                                <p className="text-[10px] font-black uppercase text-emerald-600 mb-2 flex items-center gap-1">
+                            <div className="bg-emerald-900/10 rounded-xl p-3 border border-emerald-900/30">
+                                <p className="text-[10px] font-black uppercase text-emerald-500 mb-2 flex items-center gap-1">
                                     <Package size={12} /> Materiais Utilizados
                                 </p>
                                 <div className="flex flex-wrap gap-2">
                                     {usedItems.map((item, idx) => (
-                                        <div key={idx} className="bg-white px-2 py-1 rounded-lg border border-emerald-200 text-xs flex flex-col">
-                                            <span className="font-bold text-slate-700">{item.inventory?.name}</span>
-                                            <span className="text-[10px] text-slate-500">
+                                        <div key={idx} className="bg-slate-800 px-2 py-1 rounded-lg border border-slate-700 text-xs flex flex-col">
+                                            <span className="font-bold text-slate-200">{item.inventory?.name}</span>
+                                            <span className="text-[10px] text-slate-400">
                                                 Qtd: {item.quantity} {item.inventory?.unit}
                                                 {item.serial_number && ` • SN: ${item.serial_number}`}
                                             </span>
