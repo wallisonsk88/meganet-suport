@@ -252,17 +252,17 @@ export default function App() {
               if (columnOrders.length === 0) return null;
 
               return (
-                <div key={type} className="flex-shrink-0 w-[320px] sm:w-[350px] snap-center flex flex-col gap-4">
+                <div key={type} className="flex-shrink-0 w-[320px] sm:w-[340px] snap-start flex flex-col bg-slate-900/50 rounded-2xl border border-slate-800/80 max-h-[calc(100vh-220px)] shadow-lg shadow-black/20">
                   {/* Column Header */}
-                  <div className="bg-slate-900 border-t-4 border-t-slate-700 border-x border-b border-slate-800 rounded-xl p-3 px-4 flex items-center justify-between shadow-sm sticky top-0 z-0">
-                    <h3 className="font-bold text-slate-200 uppercase text-[11px] tracking-wider">{type}</h3>
-                    <span className="bg-slate-800 text-slate-400 text-[10px] font-black px-2.5 py-1 rounded-md border border-slate-700">
+                  <div className="p-4 pb-3 flex items-center justify-between shrink-0 border-b border-slate-800/60">
+                    <h3 className="font-bold text-slate-200 text-sm">{type}</h3>
+                    <span className="bg-slate-800 text-slate-400 text-xs font-black px-2 py-0.5 rounded-lg border border-slate-700">
                       {columnOrders.length}
                     </span>
                   </div>
                   
                   {/* Column Cards */}
-                  <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-3 p-3 overflow-y-auto">
                     {columnOrders.map((os) => (
                       <OrderCard
                         key={os.id}

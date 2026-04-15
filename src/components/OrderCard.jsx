@@ -65,7 +65,7 @@ export default function OrderCard({ os, onCompleteClick, onEditClick, onDeleteCl
     const serviceStyle = getServiceTypeStyles(os.serviceType);
 
     return (
-        <div className="relative group min-w-[300px]">
+        <div className="relative group w-full">
             {/* Card */}
             <div className={`bg-slate-900 rounded-2xl p-5 shadow-lg shadow-black/20 border transition-all hover:shadow-xl hover:shadow-black/30 ${serviceStyle.borderLeft}
         ${os.status === 'completed' ? 'border-y-emerald-900/30 border-r-emerald-900/30 opacity-80' : 'border-y-slate-800 border-r-slate-800'}`}>
