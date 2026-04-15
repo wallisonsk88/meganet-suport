@@ -11,3 +11,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
 }
+
+input, select, textarea {
+  color: #000000 !important;
+}
