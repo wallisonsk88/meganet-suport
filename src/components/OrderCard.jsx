@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Clock, Check, User, Calendar, FileText, CheckCircle2, Edit2, Trash2, Package } from 'lucide-react';
 import { storage } from '../lib/storage';
 
-export default function OrderCard({ os, onCompleteClick, onEditClick, onDeleteClick, permissions, userRole }) {
+export default function OrderCard({ os, onCompleteClick, onEditClick, onDeleteClick, permissions, userRole, viewMode = 'kanban' }) {
     const { canEdit, canDelete, canComplete } = permissions;
     const [usedItems, setUsedItems] = useState([]);
 
@@ -66,6 +66,14 @@ export default function OrderCard({ os, onCompleteClick, onEditClick, onDeleteCl
 
     return (
         <div className="relative group w-full">
+            {/* Timeline Dot (Only visible in Timeline Mode) */}
+            {viewMode === 'timeline' && (
+                <div className={`absolute -left-12 top-0 w-8 h-8 rounded-full border-4 border-slate-950 flex items-center justify-center transition-colors shadow-sm text-white
+            ${os.status === 'completed' ? 'bg-emerald-500' : serviceStyle.dotPending}`}>
+                    {os.status === 'completed' ? <Check size={16} /> : <Clock size={16} />}
+                </div>
+            )}
+
             {/* Card */}
             <div className={`bg-slate-900 rounded-2xl p-5 shadow-lg shadow-black/20 border transition-all hover:shadow-xl hover:shadow-black/30 ${serviceStyle.borderLeft}
         ${os.status === 'completed' ? 'border-y-emerald-900/30 border-r-emerald-900/30 opacity-80' : 'border-y-slate-800 border-r-slate-800'}`}>
@@ -74,11 +82,13 @@ export default function OrderCard({ os, onCompleteClick, onEditClick, onDeleteCl
                     <div className="flex-1">
                         <div className="flex flex-wrap items-center gap-2 mb-2 border-transparent">
                             
-                            {/* Status Icon */}
-                            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white
-                                ${os.status === 'completed' ? 'bg-emerald-500' : serviceStyle.dotPending}`} title={os.status === 'completed' ? 'Concluída' : 'Pendente'}>
-                                {os.status === 'completed' ? <Check size={12} /> : <Clock size={12} />}
-                            </div>
+                            {/* Status Icon (Only visible in Kanban Mode) */}
+                            {viewMode === 'kanban' && (
+                                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white
+                                    ${os.status === 'completed' ? 'bg-emerald-500' : serviceStyle.dotPending}`} title={os.status === 'completed' ? 'Concluída' : 'Pendente'}>
+                                    {os.status === 'completed' ? <Check size={12} /> : <Clock size={12} />}
+                                </div>
+                            )}
 
                             <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border ${serviceStyle.chip}`}>
                                 {os.serviceType}

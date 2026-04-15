@@ -237,49 +237,79 @@ export default function App() {
           <StatsBar orders={orders} />
         </div>
 
-        {/* Kanban Board */}
-        <div className="flex gap-6 overflow-x-auto pb-8 snap-x snap-mandatory min-h-[500px]">
-          {sortedOrders.length === 0 ? (
-            <div className="w-full max-w-4xl bg-slate-900 p-12 rounded-3xl border border-dashed border-slate-800 text-center flex flex-col items-center justify-center">
-              <FileText className="text-slate-700 mb-4" size={64} />
-              <p className="text-xl font-bold text-slate-400 mb-2">Nenhuma OS encontrada</p>
-              <p className="text-sm text-slate-500">Crie uma nova Ordem de Serviço para popular o painel.</p>
-            </div>
-          ) : (
-            kanbanColumns.map(type => {
-              const columnOrders = sortedOrders.filter(os => (os.serviceType || 'Outros') === type);
-              
-              if (columnOrders.length === 0) return null;
+        {currentUser.role !== 'admin' ? (
+          /* =======================================
+             TIMELINE VIEW (TÉCNICO / RECEPÇÃO)
+             ======================================= */
+          <div className="relative border-l-2 border-slate-800 ml-4 pl-8 space-y-8 max-w-4xl mx-auto">
+            {sortedOrders.length === 0 ? (
+              <div className="bg-slate-900 p-8 rounded-2xl border border-dashed border-slate-800 text-center -ml-12">
+                <FileText className="mx-auto text-slate-600 mb-2" size={48} />
+                <p className="text-slate-400">Nenhuma ordem de serviço encontrada.</p>
+              </div>
+            ) : (
+              sortedOrders.map((os) => (
+                <OrderCard
+                  key={os.id}
+                  os={os}
+                  onCompleteClick={(order) => setCompletingOrder(order)}
+                  onEditClick={handleEditClick}
+                  onDeleteClick={(id) => handleDeleteClick(id, os.status)}
+                  permissions={permissions}
+                  userRole={currentUser?.role}
+                  viewMode="timeline"
+                />
+              ))
+            )}
+          </div>
+        ) : (
+          /* =======================================
+             KANBAN VIEW (ADMIN)
+             ======================================= */
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            {sortedOrders.length === 0 ? (
+              <div className="col-span-full w-full bg-slate-900 p-12 rounded-3xl border border-dashed border-slate-800 text-center flex flex-col items-center justify-center">
+                <FileText className="text-slate-700 mb-4" size={64} />
+                <p className="text-xl font-bold text-slate-400 mb-2">Nenhuma OS encontrada</p>
+                <p className="text-sm text-slate-500">Crie uma nova Ordem de Serviço para popular o painel.</p>
+              </div>
+            ) : (
+              kanbanColumns.map(type => {
+                const columnOrders = sortedOrders.filter(os => (os.serviceType || 'Outros') === type);
+                
+                if (columnOrders.length === 0) return null;
 
-              return (
-                <div key={type} className="flex-shrink-0 w-[320px] sm:w-[340px] snap-start flex flex-col bg-slate-900/50 rounded-2xl border border-slate-800/80 max-h-[calc(100vh-220px)] shadow-lg shadow-black/20">
-                  {/* Column Header */}
-                  <div className="p-4 pb-3 flex items-center justify-between shrink-0 border-b border-slate-800/60">
-                    <h3 className="font-bold text-slate-200 text-sm">{type}</h3>
-                    <span className="bg-slate-800 text-slate-400 text-xs font-black px-2 py-0.5 rounded-lg border border-slate-700">
-                      {columnOrders.length}
-                    </span>
+                return (
+                  <div key={type} className="flex flex-col bg-slate-900/50 rounded-2xl border border-slate-800/80 shadow-lg shadow-black/20">
+                    {/* Column Header */}
+                    <div className="p-3 pb-2.5 flex items-center justify-between shrink-0 border-b border-slate-800/60 sticky top-0 z-0 bg-slate-900/80 rounded-t-2xl backdrop-blur-sm">
+                      <h3 className="font-bold text-slate-200 text-xs tracking-wide uppercase">{type}</h3>
+                      <span className="bg-slate-800 text-slate-400 text-[10px] font-black px-2 py-0.5 rounded-md border border-slate-700">
+                        {columnOrders.length}
+                      </span>
+                    </div>
+                    
+                    {/* Column Cards Container (No scroll here, lets the page scroll down) */}
+                    <div className="flex flex-col gap-3 p-3">
+                      {columnOrders.map((os) => (
+                        <OrderCard
+                          key={os.id}
+                          os={os}
+                          onCompleteClick={(order) => setCompletingOrder(order)}
+                          onEditClick={handleEditClick}
+                          onDeleteClick={(id) => handleDeleteClick(id, os.status)}
+                          permissions={permissions}
+                          userRole={currentUser?.role}
+                          viewMode="kanban"
+                        />
+                      ))}
+                    </div>
                   </div>
-                  
-                  {/* Column Cards */}
-                  <div className="flex flex-col gap-3 p-3 overflow-y-auto">
-                    {columnOrders.map((os) => (
-                      <OrderCard
-                        key={os.id}
-                        os={os}
-                        onCompleteClick={(order) => setCompletingOrder(order)}
-                        onEditClick={handleEditClick}
-                        onDeleteClick={(id) => handleDeleteClick(id, os.status)}
-                        permissions={permissions}
-                        userRole={currentUser?.role}
-                      />
-                    ))}
-                  </div>
-                </div>
-              );
-            })
-          )}
-        </div>
+                );
+              })
+            )}
+          </div>
+        )}
       </main>
 
       <OrderFormModal
