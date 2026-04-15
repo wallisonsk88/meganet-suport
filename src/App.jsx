@@ -164,12 +164,6 @@ export default function App() {
     );
   }, [orders, searchTerm]);
 
-  const kanbanColumns = useMemo(() => {
-    const standardTypes = ['Instalação', 'Suporte', 'Pagamento', 'Mudança de Endereço', 'Troca de Equipamento'];
-    const dynamicTypes = Array.from(new Set(orders.map(o => o.serviceType || 'Outros')));
-    return Array.from(new Set([...standardTypes, ...dynamicTypes]));
-  }, [orders]);
-
   // Handlers
   const handleAddClick = () => {
     if (!permissions?.canCreate) return;
@@ -204,7 +198,7 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-900">
+      <div className="flex items-center justify-center min-h-screen bg-slate-100">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600"></div>
       </div>
     );
@@ -215,7 +209,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans pb-20">
+    <div className="min-h-screen bg-slate-100 text-slate-900 font-sans pb-20">
       <Header
         user={currentUser}
         onLogout={handleLogout}
@@ -230,86 +224,34 @@ export default function App() {
         canViewMap={permissions.canViewMap}
       />
 
-      <main className="w-full max-w-[1400px] mx-auto px-4 py-6">
+      <main className="max-w-4xl mx-auto px-4 py-6">
         {/* Search & Stats */}
-        <div className="flex flex-col md:flex-row gap-4 mb-8 max-w-4xl">
+        <div className="flex flex-col md:flex-row gap-4 mb-8">
           <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
           <StatsBar orders={orders} />
         </div>
 
-        {currentUser.role !== 'admin' ? (
-          /* =======================================
-             TIMELINE VIEW (TÉCNICO / RECEPÇÃO)
-             ======================================= */
-          <div className="relative border-l-2 border-slate-800 ml-4 pl-8 space-y-8 max-w-4xl mx-auto">
-            {sortedOrders.length === 0 ? (
-              <div className="bg-slate-900 p-8 rounded-2xl border border-dashed border-slate-800 text-center -ml-12">
-                <FileText className="mx-auto text-slate-600 mb-2" size={48} />
-                <p className="text-slate-400">Nenhuma ordem de serviço encontrada.</p>
-              </div>
-            ) : (
-              sortedOrders.map((os) => (
-                <OrderCard
-                  key={os.id}
-                  os={os}
-                  onCompleteClick={(order) => setCompletingOrder(order)}
-                  onEditClick={handleEditClick}
-                  onDeleteClick={(id) => handleDeleteClick(id, os.status)}
-                  permissions={permissions}
-                  userRole={currentUser?.role}
-                  viewMode="timeline"
-                />
-              ))
-            )}
-          </div>
-        ) : (
-          /* =======================================
-             KANBAN VIEW (ADMIN)
-             ======================================= */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            {sortedOrders.length === 0 ? (
-              <div className="col-span-full w-full bg-slate-900 p-12 rounded-3xl border border-dashed border-slate-800 text-center flex flex-col items-center justify-center">
-                <FileText className="text-slate-700 mb-4" size={64} />
-                <p className="text-xl font-bold text-slate-400 mb-2">Nenhuma OS encontrada</p>
-                <p className="text-sm text-slate-500">Crie uma nova Ordem de Serviço para popular o painel.</p>
-              </div>
-            ) : (
-              kanbanColumns.map(type => {
-                const columnOrders = sortedOrders.filter(os => (os.serviceType || 'Outros') === type);
-                
-                if (columnOrders.length === 0) return null;
-
-                return (
-                  <div key={type} className="flex flex-col bg-slate-900/50 rounded-2xl border border-slate-800/80 shadow-lg shadow-black/20">
-                    {/* Column Header */}
-                    <div className="p-3 pb-2.5 flex items-center justify-between shrink-0 border-b border-slate-800/60 sticky top-0 z-0 bg-slate-900/80 rounded-t-2xl backdrop-blur-sm">
-                      <h3 className="font-bold text-slate-200 text-xs tracking-wide uppercase">{type}</h3>
-                      <span className="bg-slate-800 text-slate-400 text-[10px] font-black px-2 py-0.5 rounded-md border border-slate-700">
-                        {columnOrders.length}
-                      </span>
-                    </div>
-                    
-                    {/* Column Cards Container (No scroll here, lets the page scroll down) */}
-                    <div className="flex flex-col gap-3 p-3">
-                      {columnOrders.map((os) => (
-                        <OrderCard
-                          key={os.id}
-                          os={os}
-                          onCompleteClick={(order) => setCompletingOrder(order)}
-                          onEditClick={handleEditClick}
-                          onDeleteClick={(id) => handleDeleteClick(id, os.status)}
-                          permissions={permissions}
-                          userRole={currentUser?.role}
-                          viewMode="kanban"
-                        />
-                      ))}
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
-        )}
+        {/* Timeline */}
+        <div className="relative border-l-2 border-slate-200 ml-4 pl-8 space-y-8">
+          {sortedOrders.length === 0 ? (
+            <div className="bg-white p-8 rounded-2xl border border-dashed border-slate-300 text-center -ml-12">
+              <FileText className="mx-auto text-slate-300 mb-2" size={48} />
+              <p className="text-slate-500">Nenhuma ordem de serviço encontrada.</p>
+            </div>
+          ) : (
+            sortedOrders.map((os) => (
+              <OrderCard
+                key={os.id}
+                os={os}
+                onCompleteClick={(order) => setCompletingOrder(order)}
+                onEditClick={handleEditClick}
+                onDeleteClick={(id) => handleDeleteClick(id, os.status)}
+                permissions={permissions}
+                userRole={currentUser?.role}
+              />
+            ))
+          )}
+        </div>
       </main>
 
       <OrderFormModal
