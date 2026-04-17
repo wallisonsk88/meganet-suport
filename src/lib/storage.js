@@ -17,18 +17,30 @@ export const storage = {
     },
 
     login: async (username, password) => {
-        const { data: users, error } = await supabase
+        const cleanUsername = username?.trim();
+        const cleanPassword = password?.trim();
+
+        console.log(`[Auth] Tentativa de login para: "${cleanUsername}"`);
+
+        const { data: user, error } = await supabase
             .from('users')
             .select('*')
-            .eq('name', username)
-            .eq('password', password)
-            .single();
+            .ilike('name', cleanUsername)
+            .eq('password', cleanPassword)
+            .maybeSingle();
 
-        if (error || !users) {
+        if (error) {
+            console.error('[Auth] Erro na consulta ao Supabase:', error);
+            return { success: false, message: 'Erro de conexão com o banco de dados.' };
+        }
+
+        if (!user) {
+            console.warn('[Auth] Usuário não encontrado ou senha incorreta.');
             return { success: false, message: 'Usuário ou senha incorretos' };
         }
 
-        const { password: _, ...userWithoutPassword } = users;
+        console.log('[Auth] Login bem-sucedido:', user.name);
+        const { password: _, ...userWithoutPassword } = user;
         storage.setAuthenticatedUser(userWithoutPassword);
         return { success: true, user: userWithoutPassword };
     },

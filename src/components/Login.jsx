@@ -13,8 +13,11 @@ export default function Login() {
         setError('');
         setLoading(true);
 
+        const trimmedUsername = username.trim();
+        const trimmedPassword = password.trim();
+
         try {
-            const result = await storage.login(username, password);
+            const result = await storage.login(trimmedUsername, trimmedPassword);
 
             if (result.success) {
                 // storage.login already sets the authenticated user
