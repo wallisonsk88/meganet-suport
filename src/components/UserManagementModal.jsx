@@ -27,12 +27,7 @@ export default function UserManagementModal({ isOpen, onClose }) {
         }
 
         try {
-            const userToSave = {
-                ...newUser,
-                name: newUser.name.trim(),
-                password: newUser.password.trim()
-            };
-            await storage.addUser(userToSave);
+            await storage.addUser(newUser);
             await refreshUsers();
             setNewUser({ name: '', role: 'tecnico', password: '' });
         } catch (err) {

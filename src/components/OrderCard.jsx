@@ -21,65 +21,26 @@ export default function OrderCard({ os, onCompleteClick, onEditClick, onDeleteCl
         }
     };
 
-    const getServiceTypeStyles = (type) => {
-        switch (type) {
-            case 'Instalação':
-                return {
-                    borderLeft: 'border-l-[6px] border-l-blue-500',
-                    chip: 'bg-blue-100 text-blue-700 border-blue-200',
-                    dotPending: 'bg-blue-500'
-                };
-            case 'Suporte':
-                return {
-                    borderLeft: 'border-l-[6px] border-l-orange-500',
-                    chip: 'bg-orange-100 text-orange-700 border-orange-200',
-                    dotPending: 'bg-orange-500'
-                };
-            case 'Pagamento':
-                return {
-                    borderLeft: 'border-l-[6px] border-l-emerald-500',
-                    chip: 'bg-emerald-100 text-emerald-700 border-emerald-200',
-                    dotPending: 'bg-emerald-500'
-                };
-            case 'Mudança de Endereço':
-                return {
-                    borderLeft: 'border-l-[6px] border-l-purple-500',
-                    chip: 'bg-purple-100 text-purple-700 border-purple-200',
-                    dotPending: 'bg-purple-500'
-                };
-            case 'Troca de Equipamento':
-                return {
-                    borderLeft: 'border-l-[6px] border-l-rose-500',
-                    chip: 'bg-rose-100 text-rose-700 border-rose-200',
-                    dotPending: 'bg-rose-500'
-                };
-            default:
-                return {
-                    borderLeft: 'border-l-[6px] border-l-slate-500',
-                    chip: 'bg-slate-100 text-slate-700 border-slate-200',
-                    dotPending: 'bg-slate-500'
-                };
-        }
-    };
-
-    const serviceStyle = getServiceTypeStyles(os.serviceType);
-
     return (
         <div className="relative group">
             {/* Timeline Dot */}
-            <div className={`absolute -left-12 top-0 w-8 h-8 rounded-full border-4 border-slate-100 flex items-center justify-center transition-colors shadow-sm text-white
-        ${os.status === 'completed' ? 'bg-emerald-500' : serviceStyle.dotPending}`}>
+            <div className={`absolute -left-12 top-0 w-8 h-8 rounded-full border-4 border-slate-100 flex items-center justify-center transition-colors shadow-sm
+        ${os.status === 'completed' ? 'bg-emerald-500 text-white' : 'bg-orange-600 text-white'}`}>
                 {os.status === 'completed' ? <Check size={16} /> : <Clock size={16} />}
             </div>
 
             {/* Card */}
-            <div className={`bg-white rounded-2xl p-5 shadow-sm border transition-all hover:shadow-md ${serviceStyle.borderLeft}
-        ${os.status === 'completed' ? 'border-y-emerald-100 border-r-emerald-100 opacity-80' : 'border-y-slate-200 border-r-slate-200'}`}>
+            <div className={`bg-white rounded-2xl p-5 shadow-sm border transition-all hover:shadow-md
+        ${os.status === 'completed' ? 'border-emerald-100 opacity-80' : 'border-slate-200'}`}>
 
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-4">
                     <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1 border-transparent">
-                            <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border ${serviceStyle.chip}`}>
+                        <div className="flex items-center gap-2 mb-1">
+                            <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full
+                ${os.serviceType === 'Instalação' ? 'bg-orange-100 text-orange-700' :
+                                    (os.serviceType === 'Reparo' || os.serviceType === 'Suporte') ? 'bg-orange-100 text-orange-700' :
+                                        os.serviceType === 'Pagamento' ? 'bg-emerald-100 text-emerald-700' :
+                                            'bg-purple-100 text-purple-700'}`}>
                                 {os.serviceType}
                             </span>
                             <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border
